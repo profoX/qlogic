@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>711</width>
+    <height>515</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QLogic</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="View" name="view">
+      <property name="styleSheet">
+       <string notr="true">background: url(&quot;:/res/img/bg.png&quot;) qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(255, 255, 255, 255), stop:1 rgba(180, 180, 180, 255));
+border: none;</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>711</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_Logic">
+    <property name="title">
+     <string>&amp;Logic</string>
+    </property>
+    <addaction name="actionSelect"/>
+    <addaction name="separator"/>
+    <addaction name="actionSwitch"/>
+   </widget>
+   <widget class="QMenu" name="menu_Simulation">
+    <property name="title">
+     <string>&amp;Simulation</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menu_Logic"/>
+   <addaction name="menu_Simulation"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>48</width>
+     <height>48</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionSelect"/>
+   <addaction name="separator"/>
+   <addaction name="actionSwitch"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionSwitch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qlogic.qrc">
+     <normaloff>:/res/img/switch.svg</normaloff>
+     <normalon>:/res/img/switch.svg</normalon>:/res/img/switch.svg</iconset>
+   </property>
+   <property name="text">
+    <string>S&amp;witch</string>
+   </property>
+  </action>
+  <action name="actionSelect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qlogic.qrc">
+     <normaloff>:/res/img/arrow.svg</normaloff>:/res/img/arrow.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Select</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>View</class>
+   <extends>QGraphicsView</extends>
+   <header>view.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="qlogic.qrc"/>
+ </resources>
+ <connections/>
+</ui>

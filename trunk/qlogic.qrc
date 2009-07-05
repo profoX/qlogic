@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/res" >
+        <file>img/switch.svg</file>
+        <file>img/switch_on.svg</file>
+        <file>img/bg.png</file>
+        <file>img/arrow.svg</file>
+    </qresource>
+</RCC>
