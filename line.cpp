@@ -1,3 +1,5 @@
+#include <QPen>
+
 #include "line.h"
 #include "sceneitem.h"
 
@@ -19,7 +21,18 @@ Line::Line(SceneItem *item1, SceneItem *item2)
 
     mySender->attachWire(this);
     myReceiver->attachWire(this);
+    setState(mySender->outSignal());
 
     setZValue(-1.0);
     setData(0, QVariant("Line"));
+}
+
+void Line::setState(bool on) {
+    active = on;
+    if (active) {
+        setPen(QPen(Qt::red, 1));
+    } else {
+        setPen(QPen(Qt::black, 1));
+    }
+    myReceiver->processIncomingSignals();
 }

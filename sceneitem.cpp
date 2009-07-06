@@ -137,6 +137,7 @@ void SceneItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
         } else if (myType == Switch && oldPosition == scenePos()) {
             on = !on;
             changeSvg();
+            updateSignalsOnWires();
         }
         setZValue(0.0);
     }
@@ -150,4 +151,29 @@ void SceneItem::setItemOpacity(int currentOpacity) {
 void SceneItem::lockOpacity(qreal opacity) {
     timeLine->stop();
     setOpacity(opacity);
+}
+
+void SceneItem::updateSignalsOnWires() {
+    // Update signal for attached wires
+    QListIterator<Line*> wires(attachedWires);
+    while (wires.hasNext()) {
+        Line *wire = wires.next();
+        wire->setState(on);
+    }
+}
+
+void SceneItem::processIncomingSignals() {
+    // Update signal for attached wires
+    QListIterator<Line*> wires(attachedWires);
+    while (wires.hasNext()) {
+        Line *wire = wires.next();
+        if (wire->activeSignal()) {
+            on = true;
+            changeSvg();
+            return;
+        } else {
+            on = false;
+            changeSvg();
+        }
+    }
 }
