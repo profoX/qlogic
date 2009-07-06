@@ -19,6 +19,9 @@ SceneItem::SceneItem(ItemType type) {
         case Led:
             mySignalType = Receiver;
             break;
+        case AndGate:
+            mySignalType = SenderAndReceiver;
+            break;
         default:
             break;
     }
@@ -54,7 +57,8 @@ bool SceneItem::checkCollision() {
         QListIterator<QGraphicsItem*> colliding(collidingItems());
         while (colliding.hasNext()) {
             QGraphicsItem *collidingItem = colliding.next();
-            if (collidingItem != overlayItem && !attachedWires.contains(qgraphicsitem_cast<Line*>(collidingItem))) {
+            if (collidingItem != overlayItem && !attachedInWires.contains(qgraphicsitem_cast<Line*>(collidingItem)) &&
+                !attachedOutWires.contains(qgraphicsitem_cast<Line*>(collidingItem))) {
                 showOverlayItem();
                 return true;
             }
@@ -64,8 +68,12 @@ bool SceneItem::checkCollision() {
     }
 }
 
-void SceneItem::attachWire(Line *wire) {
-    attachedWires << wire;
+void SceneItem::attachInWire(Line *wire) {
+    attachedInWires << wire;
+}
+
+void SceneItem::attachOutWire(Line *wire) {
+    attachedOutWires << wire;
 }
 
 void SceneItem::deleteItem() {
@@ -98,7 +106,7 @@ void SceneItem::moveWithWires(QPointF newPosition) {
     setPos(newPosition);
 
     // Move attached wires as well
-    QListIterator<Line*> wires(attachedWires);
+    QListIterator<Line*> wires(attachedInWires << attachedOutWires);
     while (wires.hasNext()) {
         Line *wire = wires.next();
         wire->setLine(QLineF(wire->sender()->pos() + wire->sender()->boundingRect().center(),
@@ -118,6 +126,8 @@ void SceneItem::changeSvg() {
         case Led:
             svgs << ":/res/img/led_on.svg" << ":/res/img/led.svg";
             break;
+        case AndGate:
+            svgs << ":/res/img/andgate.svg" << ":/res/img/andgate.svg";
         default:
             break;
     }
@@ -155,25 +165,48 @@ void SceneItem::lockOpacity(qreal opacity) {
 
 void SceneItem::updateSignalsOnWires() {
     // Update signal for attached wires
-    QListIterator<Line*> wires(attachedWires);
+    QListIterator<Line*> wires(attachedOutWires);
+
     while (wires.hasNext()) {
         Line *wire = wires.next();
+        qDebug() << "wire out " << wire;
         wire->setState(on);
     }
 }
 
 void SceneItem::processIncomingSignals() {
     // Update signal for attached wires
-    QListIterator<Line*> wires(attachedWires);
+    QListIterator<Line*> wires(attachedInWires);
+    bool outSignal;
+
+    switch (myType) {
+        case AndGate:
+            outSignal = true;
+            break;
+        default:
+            outSignal = false;
+            break;
+    }
+
     while (wires.hasNext()) {
         Line *wire = wires.next();
-        if (wire->activeSignal()) {
-            on = true;
-            changeSvg();
-            return;
-        } else {
-            on = false;
-            changeSvg();
+
+        qDebug() << "wire in " << wire;
+        switch (myType) {
+            case Led:
+                if (wire->activeSignal())
+                    outSignal = true;
+                break;
+            case AndGate:
+                if (!wire->activeSignal())
+                    outSignal = false;
+                break;
+            default:
+                break;
         }
     }
+
+    on = outSignal;
+    changeSvg();
+    updateSignalsOnWires();
 }

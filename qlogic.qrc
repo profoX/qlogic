@@ -7,5 +7,6 @@
         <file>img/led.svg</file>
         <file>img/led_on.svg</file>
         <file>img/line.svg</file>
+        <file>img/andgate.svg</file>
     </qresource>
 </RCC>

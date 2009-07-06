@@ -97,6 +97,8 @@ border: none;</string>
    <addaction name="actionSelect"/>
    <addaction name="actionLine"/>
    <addaction name="separator"/>
+   <addaction name="actionAnd"/>
+   <addaction name="separator"/>
    <addaction name="actionSwitch"/>
    <addaction name="actionLed"/>
   </widget>
@@ -143,7 +145,7 @@ border: none;</string>
      <normaloff>:/res/img/led_on.svg</normaloff>:/res/img/led_on.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Led</string>
+    <string>L&amp;ed</string>
    </property>
   </action>
   <action name="actionLine">
@@ -155,7 +157,7 @@ border: none;</string>
      <normaloff>:/res/img/line.svg</normaloff>:/res/img/line.svg</iconset>
    </property>
    <property name="text">
-    <string>Line</string>
+    <string>&amp;Line</string>
    </property>
   </action>
   <action name="actionUseOpenGL">
@@ -164,6 +166,18 @@ border: none;</string>
    </property>
    <property name="text">
     <string>Use OpenGL</string>
+   </property>
+  </action>
+  <action name="actionAnd">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qlogic.qrc">
+     <normaloff>:/res/img/andgate.svg</normaloff>:/res/img/andgate.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;And</string>
    </property>
   </action>
  </widget>
