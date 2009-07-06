@@ -8,5 +8,6 @@
         <file>img/led_on.svg</file>
         <file>img/line.svg</file>
         <file>img/andgate.svg</file>
+        <file>img/oscillator.svg</file>
     </qresource>
 </RCC>

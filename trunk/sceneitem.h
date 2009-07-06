@@ -11,11 +11,12 @@ class SceneItem : public QGraphicsSvgItem
     Q_OBJECT
 
 public:
-    enum ItemType {Switch, Led, AndGate};
+    enum ItemType {Switch, Oscillator, Led, AndGate};
     enum SignalType {Sender, Receiver, SenderAndReceiver};
     enum {Type = UserType + 1};
 
     SceneItem(ItemType type);
+    void initAfterCreation();
     int type() const {return Type;}
     ItemType itemType() const {return myType;}
     SignalType signalType() const {return mySignalType;}
@@ -39,6 +40,7 @@ protected:
 
 private slots:
     void setItemOpacity(int opacity);
+    void reverseState();
 
 private:
     void moveWithWires(QPointF newPosition);
@@ -47,7 +49,7 @@ private:
     ItemType myType;
     SignalType mySignalType;
     int currentOpacity;
-    QTimeLine *timeLine;
+    QTimeLine *timeLine, *oscillator;
     bool on;
     QGraphicsRectItem *overlayItem;
     QPointF oldPosition;

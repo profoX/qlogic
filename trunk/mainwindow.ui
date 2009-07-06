@@ -100,6 +100,7 @@ border: none;</string>
    <addaction name="actionAnd"/>
    <addaction name="separator"/>
    <addaction name="actionSwitch"/>
+   <addaction name="actionOscillator"/>
    <addaction name="actionLed"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -178,6 +179,18 @@ border: none;</string>
    </property>
    <property name="text">
     <string>&amp;And</string>
+   </property>
+  </action>
+  <action name="actionOscillator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qlogic.qrc">
+     <normaloff>:/res/img/oscillator.svg</normaloff>:/res/img/oscillator.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Oscillator</string>
    </property>
   </action>
  </widget>
