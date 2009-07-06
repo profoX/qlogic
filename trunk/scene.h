@@ -12,7 +12,7 @@ class Scene : public QGraphicsScene
 public:
     enum Mode {InsertItem, InsertLine, MoveItem};
     Scene(QObject *parent = 0);
-    void setItemType(SceneItem::Type type) {itemType = type;}
+    void setItemType(SceneItem::ItemType type) {itemType = type;}
 
 public slots:
     void setMode(Mode mode);
@@ -26,10 +26,10 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:
-     SceneItem *item;
+     SceneItem *item, *itemUnderLine;
      QGraphicsLineItem *line;
      Mode myMode;
-     SceneItem::Type itemType;
+     SceneItem::ItemType itemType;
 };
 
 #endif // SCENE_H
