@@ -1,6 +1,7 @@
 #include <QLabel>
 #include <QSlider>
 #include <QScrollBar>
+#include <QGLWidget>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -26,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->view->horizontalScrollBar()->setValue(0);
     ui->view->verticalScrollBar()->setValue(0);
+
+    viewStyleSheet = ui->view->styleSheet();
 }
 
 MainWindow::~MainWindow() {
@@ -67,4 +70,14 @@ void MainWindow::on_actionLine_triggered()
     unsetButtons();
     ui->actionLine->setChecked(true);
     scene->setMode(Scene::InsertLine);
+}
+
+void MainWindow::on_actionUseOpenGL_triggered(bool checked)
+{
+    if (checked)
+        ui->view->setViewport(new QGLWidget);
+    else {
+        ui->view->setViewport(NULL);
+        ui->view->setStyleSheet(viewStyleSheet);
+    }
 }

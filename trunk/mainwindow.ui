@@ -41,6 +41,7 @@ border: none;</string>
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="actionUseOpenGL"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
     <property name="title">
@@ -155,6 +156,14 @@ border: none;</string>
    </property>
    <property name="text">
     <string>Line</string>
+   </property>
+  </action>
+  <action name="actionUseOpenGL">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use OpenGL</string>
    </property>
   </action>
  </widget>

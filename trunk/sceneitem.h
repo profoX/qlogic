@@ -4,6 +4,7 @@
 #include <QGraphicsSvgItem>
 
 class QTimeLine;
+class Line;
 
 class SceneItem : public QGraphicsSvgItem
 {
@@ -21,6 +22,7 @@ public:
     void showOverlayItem();
     void hideOverlayItem();
     bool checkCollision();
+    void addWire(Line *wire);
 
 public slots:
     void deleteItem();
@@ -42,6 +44,7 @@ private:
     bool on;
     QGraphicsRectItem *overlayItem;
     QPointF oldPosition;
+    QList<Line*> connectedWires;
 };
 
 #endif // SCENEITEM_H
