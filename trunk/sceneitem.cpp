@@ -146,3 +146,8 @@ void SceneItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 void SceneItem::setItemOpacity(int currentOpacity) {
     setOpacity(currentOpacity/100.0);
 }
+
+void SceneItem::lockOpacity(qreal opacity) {
+    timeLine->stop();
+    setOpacity(opacity);
+}

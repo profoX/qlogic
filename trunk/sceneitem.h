@@ -23,6 +23,7 @@ public:
     void hideOverlayItem();
     bool checkCollision();
     void attachWire(Line *wire);
+    void lockOpacity(qreal opacity);
 
 public slots:
     void deleteItem();
