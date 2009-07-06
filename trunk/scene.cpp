@@ -30,10 +30,19 @@ void Scene::deleteItem() {
     }
 }
 
+QGraphicsItem *Scene::collidingItemAt(QPointF pos) {
+    if (itemAt(pos) == 0)
+        return NULL;
+    else if (itemAt(pos)->data(0).toString() == "Item")
+        return itemAt(pos);
+    return NULL;
+}
+
 void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     if (mouseEvent->button() != Qt::LeftButton)
         return;
 
+    QGraphicsItem *collidingItem;
     switch (myMode) {
         case InsertItem:
             if (!item->checkCollision()) {
@@ -42,10 +51,13 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                 item = NULL;
             }
         case InsertLine:
-            line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(),
-                                                mouseEvent->scenePos()), NULL, this);
-            line->setPen(QPen(Qt::black, 4));
-            line->setZValue(-1.0);
+            collidingItem = collidingItemAt(mouseEvent->scenePos());
+            if (collidingItem) {
+                line = new QGraphicsLineItem(QLineF(collidingItem->pos() + collidingItem->boundingRect().center(),
+                                                    collidingItem->pos() + collidingItem->boundingRect().center()), NULL, this);
+                line->setPen(QPen(Qt::black, 5));
+                line->setZValue(-1.0);
+            }
             break;
         default:
             break;
@@ -68,7 +80,12 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
             break;
         case InsertLine:
             if (line) {
-                QLineF newLine(line->line().p1(), mouseEvent->scenePos());
+                QLineF newLine;
+                QGraphicsItem *collidingItem = collidingItemAt(mouseEvent->scenePos());
+                if (collidingItem)
+                    newLine.setPoints(line->line().p1(), collidingItem->pos() + collidingItem->boundingRect().center());
+                else
+                    newLine.setPoints(line->line().p1(), mouseEvent->scenePos());
                 line->setLine(newLine);
             }
             break;

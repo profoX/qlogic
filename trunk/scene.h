@@ -18,6 +18,7 @@ public slots:
     void setMode(Mode mode);
     Mode mode() {return myMode;}
     void deleteItem();
+    QGraphicsItem *collidingItemAt(QPointF pos);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
