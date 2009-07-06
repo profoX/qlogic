@@ -22,7 +22,7 @@ public:
     void showOverlayItem();
     void hideOverlayItem();
     bool checkCollision();
-    void addWire(Line *wire);
+    void attachWire(Line *wire);
 
 public slots:
     void deleteItem();
@@ -36,6 +36,7 @@ private slots:
     void setItemOpacity(int opacity);
 
 private:
+    void moveWithWires(QPointF newPosition);
     void changeSvg();
     ItemType myType;
     SignalType mySignalType;
@@ -44,7 +45,7 @@ private:
     bool on;
     QGraphicsRectItem *overlayItem;
     QPointF oldPosition;
-    QList<Line*> connectedWires;
+    QList<Line*> attachedWires;
 };
 
 #endif // SCENEITEM_H

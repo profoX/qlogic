@@ -7,14 +7,18 @@ Line::Line(SceneItem *item1, SceneItem *item2)
 
     // Both can't be sender and both can't be receiver, otherwise this function would not be called
     if (item1->signalType() == SceneItem::Sender || item2->signalType() == SceneItem::Receiver) {
-        this->sender = item1;
-        this->receiver = item2;
+        mySender = item1;
+        myReceiver = item2;
     } else if (item2->signalType() == SceneItem::Sender || item1->signalType() == SceneItem::Receiver) {
-        this->sender = item2;
-        this->receiver = item1;
+        mySender = item2;
+        myReceiver = item1;
+    } else {
+        mySender = item1;
+        myReceiver = item2;
     }
 
-
+    mySender->attachWire(this);
+    myReceiver->attachWire(this);
 
     setZValue(-1.0);
     setData(0, QVariant("Line"));
