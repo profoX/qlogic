@@ -24,6 +24,9 @@ public:
     bool checkCollision();
     void attachWire(Line *wire);
     void lockOpacity(qreal opacity);
+    void updateSignalsOnWires();
+    bool outSignal() {return on;}
+    void processIncomingSignals();
 
 public slots:
     void deleteItem();
@@ -39,6 +42,7 @@ private slots:
 private:
     void moveWithWires(QPointF newPosition);
     void changeSvg();
+
     ItemType myType;
     SignalType mySignalType;
     int currentOpacity;
