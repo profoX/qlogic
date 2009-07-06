@@ -20,9 +20,14 @@ public:
     ~MainWindow();
 
 private:
+    void unsetButtons();
     Ui::MainWindow *ui;
     Scene *scene;
     QSlider *slider;
+
+private slots:
+    void on_actionSwitch_triggered();
+    void on_actionSelect_triggered();
 };
 
 #endif // MAINWINDOW_H

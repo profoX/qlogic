@@ -30,3 +30,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow() {
     delete ui;
 }
+
+void MainWindow::unsetButtons() {
+    ui->actionSelect->setChecked(false);
+    ui->actionSwitch->setChecked(false);
+}
+
+void MainWindow::on_actionSelect_triggered()
+{
+    unsetButtons();
+    ui->actionSelect->setChecked(true);
+    scene->setMode(Scene::MoveItem);
+}
+
+void MainWindow::on_actionSwitch_triggered()
+{
+    unsetButtons();
+    ui->actionSwitch->setChecked(true);
+    scene->setMode(Scene::InsertItem);
+}

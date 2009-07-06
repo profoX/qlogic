@@ -13,9 +13,17 @@ public:
     enum Type {Switch};
     SceneItem(Type type);
     int type() const {return myType;}
+    void showOverlayItem();
+    void hideOverlayItem();
+    bool checkCollision();
 
 public slots:
     void deleteItem();
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private slots:
     void setItemOpacity(int opacity);
@@ -24,6 +32,9 @@ private:
     Type myType;
     int currentOpacity;
     QTimeLine *timeLine;
+    bool on;
+    QGraphicsRectItem *overlayItem;
+    QPointF oldPosition;
 };
 
 #endif // SCENEITEM_H

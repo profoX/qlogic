@@ -24,6 +24,9 @@
        <string notr="true">background: url(&quot;:/res/img/bg.png&quot;) qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(255, 255, 255, 255), stop:1 rgba(180, 180, 180, 255));
 border: none;</string>
       </property>
+      <property name="dragMode">
+       <enum>QGraphicsView::RubberBandDrag</enum>
+      </property>
      </widget>
     </item>
    </layout>
@@ -122,9 +125,6 @@ border: none;</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="icon">

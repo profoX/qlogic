@@ -4,6 +4,7 @@ View::View(QWidget *parent) : QGraphicsView(parent) {
 }
 
 void View::leaveEvent(QEvent *event) {
+    Q_UNUSED(event);
     emit mouseLeftView();
 }
 
