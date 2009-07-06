@@ -10,12 +10,14 @@ SOURCES += main.cpp \
     scene.cpp \
     sceneitem.cpp \
     view.cpp \
-    zoomwidget.cpp
+    zoomwidget.cpp \
+    line.cpp
 HEADERS += mainwindow.h \
     scene.h \
     sceneitem.h \
     view.h \
-    zoomwidget.h
+    zoomwidget.h \
+    line.h
 FORMS += mainwindow.ui \
     zoomwidget.ui
 RESOURCES += qlogic.qrc

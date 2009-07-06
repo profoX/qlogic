@@ -13,8 +13,8 @@ SceneItem::SceneItem(Type type) {
     on = false;
     overlayItem = new QGraphicsRectItem(this);
     setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren | QGraphicsItem::ItemIsMovable);
-
     changeSvg();
+    setData(0, QVariant("Item"));
 
     setOpacity(0.0);
     timeLine = new QTimeLine(333, this);
