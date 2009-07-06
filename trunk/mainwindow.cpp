@@ -40,6 +40,7 @@ void MainWindow::unsetButtons() {
     ui->actionSwitch->setChecked(false);
     ui->actionLed->setChecked(false);
     ui->actionLine->setChecked(false);
+    ui->actionAnd->setChecked(false);
 }
 
 void MainWindow::on_actionSelect_triggered()
@@ -80,4 +81,12 @@ void MainWindow::on_actionUseOpenGL_triggered(bool checked)
         ui->view->setViewport(NULL);
         ui->view->setStyleSheet(viewStyleSheet);
     }
+}
+
+void MainWindow::on_actionAnd_triggered()
+{
+    unsetButtons();
+    ui->actionAnd->setChecked(true);
+    scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::AndGate);
 }

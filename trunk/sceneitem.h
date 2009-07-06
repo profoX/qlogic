@@ -11,7 +11,7 @@ class SceneItem : public QGraphicsSvgItem
     Q_OBJECT
 
 public:
-    enum ItemType {Switch, Led};
+    enum ItemType {Switch, Led, AndGate};
     enum SignalType {Sender, Receiver, SenderAndReceiver};
     enum {Type = UserType + 1};
 
@@ -22,7 +22,8 @@ public:
     void showOverlayItem();
     void hideOverlayItem();
     bool checkCollision();
-    void attachWire(Line *wire);
+    void attachInWire(Line *wire);
+    void attachOutWire(Line *wire);
     void lockOpacity(qreal opacity);
     void updateSignalsOnWires();
     bool outSignal() {return on;}
@@ -50,7 +51,8 @@ private:
     bool on;
     QGraphicsRectItem *overlayItem;
     QPointF oldPosition;
-    QList<Line*> attachedWires;
+    QList<Line*> attachedInWires;
+    QList<Line*> attachedOutWires;
 };
 
 #endif // SCENEITEM_H

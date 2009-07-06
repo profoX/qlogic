@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include <QPen>
 
 #include "line.h"
@@ -19,8 +21,8 @@ Line::Line(SceneItem *item1, SceneItem *item2)
         myReceiver = item2;
     }
 
-    mySender->attachWire(this);
-    myReceiver->attachWire(this);
+    mySender->attachOutWire(this);
+    myReceiver->attachInWire(this);
     setState(mySender->outSignal());
 
     setZValue(-1.0);
