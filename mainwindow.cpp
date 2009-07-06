@@ -36,6 +36,7 @@ void MainWindow::unsetButtons() {
     ui->actionSelect->setChecked(false);
     ui->actionSwitch->setChecked(false);
     ui->actionLed->setChecked(false);
+    ui->actionLine->setChecked(false);
 }
 
 void MainWindow::on_actionSelect_triggered()
@@ -59,4 +60,11 @@ void MainWindow::on_actionLed_triggered()
     ui->actionLed->setChecked(true);
     scene->setMode(Scene::InsertItem);
     scene->setItemType(SceneItem::Led);
+}
+
+void MainWindow::on_actionLine_triggered()
+{
+    unsetButtons();
+    ui->actionLine->setChecked(true);
+    scene->setMode(Scene::InsertLine);
 }

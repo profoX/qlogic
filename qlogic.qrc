@@ -6,5 +6,6 @@
         <file>img/arrow.svg</file>
         <file>img/led.svg</file>
         <file>img/led_on.svg</file>
+        <file>img/line.svg</file>
     </qresource>
 </RCC>
