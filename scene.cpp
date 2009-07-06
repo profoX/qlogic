@@ -4,10 +4,12 @@
 
 #include "scene.h"
 #include "sceneitem.h"
+#include "line.h"
 
 Scene::Scene(QObject *parent) : QGraphicsScene(parent) {
     item = NULL;
     line = NULL;
+    itemUnderLine = NULL;
 }
 
 void Scene::setMode(Mode mode) {
@@ -55,8 +57,9 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
             if (collidingItem) {
                 line = new QGraphicsLineItem(QLineF(collidingItem->pos() + collidingItem->boundingRect().center(),
                                                     collidingItem->pos() + collidingItem->boundingRect().center()), NULL, this);
-                line->setPen(QPen(Qt::black, 5));
+                line->setPen(QPen(Qt::blue, 1));
                 line->setZValue(-1.0);
+                itemUnderLine = qgraphicsitem_cast<SceneItem*>(collidingItem);
             }
             break;
         default:
@@ -98,8 +101,21 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     switch (myMode) {
         case InsertLine:
-            delete line;
-            line = NULL;
+            if (line) {
+                SceneItem *collidingItem = qgraphicsitem_cast<SceneItem*>(collidingItemAt(mouseEvent->scenePos()));
+                if (collidingItem) {
+                    // Both can't be sender and both can't be receiver
+                    if (!((itemUnderLine->signalType() == SceneItem::Sender && collidingItem->signalType() == SceneItem::Sender) ||
+                        (itemUnderLine->signalType() == SceneItem::Receiver && collidingItem->signalType() == SceneItem::Receiver))) {
+                        Line *wire = new Line(itemUnderLine, collidingItem);
+                        wire->setLine(line->line());
+                        addItem(wire);
+                    }
+                }
+                delete line;
+                line = NULL;
+                itemUnderLine = NULL;
+            }
             break;
         default:
             break;

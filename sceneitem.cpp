@@ -8,8 +8,20 @@
 #include "sceneitem.h"
 #include "scene.h"
 
-SceneItem::SceneItem(Type type) {
+SceneItem::SceneItem(ItemType type) {
     myType = type;
+
+    switch (myType) {
+        case Switch:
+            mySignalType = Sender;
+            break;
+        case Led:
+            mySignalType = Receiver;
+            break;
+        default:
+            break;
+    }
+
     on = false;
     overlayItem = new QGraphicsRectItem(this);
     setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren | QGraphicsItem::ItemIsMovable);

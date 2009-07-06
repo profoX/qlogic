@@ -10,9 +10,14 @@ class SceneItem : public QGraphicsSvgItem
     Q_OBJECT
 
 public:
-    enum Type {Switch, Led};
-    SceneItem(Type type);
-    int type() const {return myType;}
+    enum ItemType {Switch, Led};
+    enum SignalType {Sender, Receiver, SenderAndReceiver};
+    enum {Type = UserType + 1};
+
+    SceneItem(ItemType type);
+    int type() const {return Type;}
+    ItemType itemType() const {return myType;}
+    SignalType signalType() const {return mySignalType;}
     void showOverlayItem();
     void hideOverlayItem();
     bool checkCollision();
@@ -30,7 +35,8 @@ private slots:
 
 private:
     void changeSvg();
-    Type myType;
+    ItemType myType;
+    SignalType mySignalType;
     int currentOpacity;
     QTimeLine *timeLine;
     bool on;
