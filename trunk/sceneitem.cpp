@@ -47,17 +47,25 @@ void SceneItem::hideOverlayItem() {
 }
 
 bool SceneItem::checkCollision() {
-    if (collidingItems().isEmpty() || (collidingItems().count() == 1 && collidingItems()[0] == overlayItem)) {
+    if (collidingItems().isEmpty()) {
         hideOverlayItem();
         return false;
     } else {
-        showOverlayItem();
-        return true;
+        QListIterator<QGraphicsItem*> colliding(collidingItems());
+        while (colliding.hasNext()) {
+            QGraphicsItem *collidingItem = colliding.next();
+            if (collidingItem != overlayItem && !attachedWires.contains(qgraphicsitem_cast<Line*>(collidingItem))) {
+                showOverlayItem();
+                return true;
+            }
+        }
+        hideOverlayItem();
+        return false;
     }
 }
 
-void SceneItem::addWire(Line *wire) {
-    connectedWires << wire;
+void SceneItem::attachWire(Line *wire) {
+    attachedWires << wire;
 }
 
 void SceneItem::deleteItem() {
@@ -81,8 +89,20 @@ void SceneItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     if (qobject_cast<Scene*>(scene())->mode() == Scene::MoveItem) {
         QPointF newPosition(static_cast<int>(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50),
                             static_cast<int>(mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50));
-        setPos(newPosition);
+        moveWithWires(newPosition);
         checkCollision();
+    }
+}
+
+void SceneItem::moveWithWires(QPointF newPosition) {
+    setPos(newPosition);
+
+    // Move attached wires as well
+    QListIterator<Line*> wires(attachedWires);
+    while (wires.hasNext()) {
+        Line *wire = wires.next();
+        wire->setLine(QLineF(wire->sender()->pos() + wire->sender()->boundingRect().center(),
+                             wire->receiver()->pos() + wire->receiver()->boundingRect().center()));
     }
 }
 
@@ -112,7 +132,7 @@ void SceneItem::changeSvg() {
 void SceneItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     if (qobject_cast<Scene*>(scene())->mode() == Scene::MoveItem) {
         if (checkCollision()) {
-            setPos(oldPosition);
+            moveWithWires(oldPosition);
             hideOverlayItem();
         } else if (myType == Switch && oldPosition == scenePos()) {
             on = !on;

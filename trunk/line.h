@@ -9,10 +9,12 @@ class Line : public QGraphicsLineItem
 {
 public:
     Line(SceneItem *item1, SceneItem *item2);
+    SceneItem *sender() {return mySender;}
+    SceneItem *receiver() {return myReceiver;}
 
 private:
     bool bothItemsAreSenderAndReceiver;
-    SceneItem *sender, *receiver;
+    SceneItem *mySender, *myReceiver;
 };
 
 #endif // LINE_H
