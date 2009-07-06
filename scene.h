@@ -3,7 +3,7 @@
 
 #include <QGraphicsScene>
 
-class SceneItem;
+#include "sceneitem.h"
 
 class Scene : public QGraphicsScene
 {
@@ -12,6 +12,7 @@ class Scene : public QGraphicsScene
 public:
     enum Mode {InsertItem, InsertLine, InsertText, MoveItem};
     Scene(QObject *parent = 0);
+    void setItemType(SceneItem::Type type) {itemType = type;}
 
 public slots:
     void setMode(Mode mode) {myMode = mode;}
@@ -21,11 +22,11 @@ public slots:
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
-    //void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:
      SceneItem *item;
      Mode myMode;
+     SceneItem::Type itemType;
 };
 
 #endif // SCENE_H

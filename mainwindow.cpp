@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene = new Scene(this);
     scene->setSceneRect(QRectF(0, 0, 10000, 10000));
     scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::Switch);
     ui->view->setScene(scene);
     connect(ui->view, SIGNAL(mouseLeftView()), scene, SLOT(deleteItem()));
 
@@ -34,6 +35,7 @@ MainWindow::~MainWindow() {
 void MainWindow::unsetButtons() {
     ui->actionSelect->setChecked(false);
     ui->actionSwitch->setChecked(false);
+    ui->actionLed->setChecked(false);
 }
 
 void MainWindow::on_actionSelect_triggered()
@@ -48,4 +50,13 @@ void MainWindow::on_actionSwitch_triggered()
     unsetButtons();
     ui->actionSwitch->setChecked(true);
     scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::Switch);
+}
+
+void MainWindow::on_actionLed_triggered()
+{
+    unsetButtons();
+    ui->actionLed->setChecked(true);
+    scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::Led);
 }

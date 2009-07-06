@@ -4,5 +4,7 @@
         <file>img/switch_on.svg</file>
         <file>img/bg.png</file>
         <file>img/arrow.svg</file>
+        <file>img/led.svg</file>
+        <file>img/led_on.svg</file>
     </qresource>
 </RCC>

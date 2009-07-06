@@ -35,7 +35,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     switch (myMode) {
         case InsertItem:
             if (!item) {
-                item = new SceneItem(SceneItem::Switch);
+                item = new SceneItem(itemType);
                 item->setZValue(1.0);
                 addItem(item);
             }

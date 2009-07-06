@@ -14,12 +14,7 @@ SceneItem::SceneItem(Type type) {
     overlayItem = new QGraphicsRectItem(this);
     setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren | QGraphicsItem::ItemIsMovable);
 
-    switch (type) {
-        case Switch:
-            QSvgRenderer *sharedRenderer = new QSvgRenderer(QString(":/res/img/switch.svg"), this);
-            setSharedRenderer(sharedRenderer);
-            break;
-    }
+    changeSvg();
 
     setOpacity(0.0);
     timeLine = new QTimeLine(333, this);
@@ -58,39 +53,55 @@ void SceneItem::deleteItem() {
 }
 
 void SceneItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-    setZValue(1.0);
-    oldPosition = scenePos();
+    if (qobject_cast<Scene*>(scene())->mode() == Scene::MoveItem) {
+        setZValue(1.0);
+        oldPosition = scenePos();
+    }
     QGraphicsItem::mousePressEvent(mouseEvent);
 }
 
 void SceneItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-    setPos(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50,
-           mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50);
-    checkCollision();
+    if (qobject_cast<Scene*>(scene())->mode() == Scene::MoveItem) {
+        setPos(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50,
+               mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50);
+        checkCollision();
+    }
+}
+
+void SceneItem::changeSvg() {
+    QStringList svgs;
+    QSvgRenderer *sharedRenderer;
+
+    renderer()->deleteLater();
+    switch (myType) {
+        case Switch:
+            svgs << ":/res/img/switch_on.svg" << ":/res/img/switch.svg";
+            break;
+        case Led:
+            svgs << ":/res/img/led_on.svg" << ":/res/img/led.svg";
+            break;
+        default:
+            break;
+    }
+
+    if (on)
+        sharedRenderer = new QSvgRenderer(svgs[0], this);
+    else
+        sharedRenderer = new QSvgRenderer(svgs[1], this);
+    setSharedRenderer(sharedRenderer);
 }
 
 void SceneItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-    QSvgRenderer *sharedRenderer;
-
-    if (checkCollision()) {
-        setPos(oldPosition);
-        hideOverlayItem();
-    } else if (oldPosition == scenePos() && qobject_cast<Scene*>(scene())->mode() == Scene::MoveItem) {
-        switch (myType) {
-            case Switch:
-                renderer()->deleteLater();
-                if (on)
-                    sharedRenderer = new QSvgRenderer(QString(":/res/img/switch.svg"), this);
-                else
-                    sharedRenderer = new QSvgRenderer(QString(":/res/img/switch_on.svg"), this);
-                on = !on;
-                setSharedRenderer(sharedRenderer);
-                break;
-            default:
-                break;
+    if (qobject_cast<Scene*>(scene())->mode() == Scene::MoveItem) {
+        if (checkCollision()) {
+            setPos(oldPosition);
+            hideOverlayItem();
+        } else if (myType == Switch && oldPosition == scenePos()) {
+            on = !on;
+            changeSvg();
         }
+        setZValue(0.0);
     }
-    setZValue(0.0);
     QGraphicsItem::mouseReleaseEvent(mouseEvent);
 }
 
