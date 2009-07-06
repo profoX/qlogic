@@ -10,7 +10,7 @@ class SceneItem : public QGraphicsSvgItem
     Q_OBJECT
 
 public:
-    enum Type {Switch};
+    enum Type {Switch, Led};
     SceneItem(Type type);
     int type() const {return myType;}
     void showOverlayItem();
@@ -29,6 +29,7 @@ private slots:
     void setItemOpacity(int opacity);
 
 private:
+    void changeSvg();
     Type myType;
     int currentOpacity;
     QTimeLine *timeLine;

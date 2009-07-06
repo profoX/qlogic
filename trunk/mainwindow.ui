@@ -99,6 +99,7 @@ border: none;</string>
    <addaction name="actionSelect"/>
    <addaction name="separator"/>
    <addaction name="actionSwitch"/>
+   <addaction name="actionLed"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionSwitch">
@@ -113,8 +114,7 @@ border: none;</string>
    </property>
    <property name="icon">
     <iconset resource="qlogic.qrc">
-     <normaloff>:/res/img/switch.svg</normaloff>
-     <normalon>:/res/img/switch.svg</normalon>:/res/img/switch.svg</iconset>
+     <normaloff>:/res/img/switch_on.svg</normaloff>:/res/img/switch_on.svg</iconset>
    </property>
    <property name="text">
     <string>S&amp;witch</string>
@@ -133,6 +133,18 @@ border: none;</string>
    </property>
    <property name="text">
     <string>&amp;Select</string>
+   </property>
+  </action>
+  <action name="actionLed">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qlogic.qrc">
+     <normaloff>:/res/img/led_on.svg</normaloff>:/res/img/led_on.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Led</string>
    </property>
   </action>
  </widget>
