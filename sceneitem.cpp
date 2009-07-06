@@ -14,6 +14,7 @@ SceneItem::SceneItem(ItemType type) {
 
     switch (myType) {
         case Switch:
+        case Oscillator:
             mySignalType = Sender;
             break;
         case Led:
@@ -37,6 +38,15 @@ SceneItem::SceneItem(ItemType type) {
     timeLine->setFrameRange(0, 75);
     connect(timeLine, SIGNAL(frameChanged(int)), this, SLOT(setItemOpacity(int)));
     timeLine->start();
+}
+
+void SceneItem::initAfterCreation() {
+    if (myType == Oscillator) {
+        oscillator = new QTimeLine(500, this);
+        connect(oscillator, SIGNAL(finished()), this, SLOT(reverseState()));
+        connect(oscillator, SIGNAL(finished()), oscillator, SLOT(start()));
+        oscillator->start();
+    }
 }
 
 void SceneItem::showOverlayItem() {
@@ -123,11 +133,15 @@ void SceneItem::changeSvg() {
         case Switch:
             svgs << ":/res/img/switch_on.svg" << ":/res/img/switch.svg";
             break;
+        case Oscillator:
+            svgs << ":/res/img/oscillator.svg" << ":/res/img/oscillator.svg";
+            break;
         case Led:
             svgs << ":/res/img/led_on.svg" << ":/res/img/led.svg";
             break;
         case AndGate:
             svgs << ":/res/img/andgate.svg" << ":/res/img/andgate.svg";
+            break;
         default:
             break;
     }
@@ -139,15 +153,19 @@ void SceneItem::changeSvg() {
     setSharedRenderer(sharedRenderer);
 }
 
+void SceneItem::reverseState() {
+    on = !on;
+    changeSvg();
+    updateSignalsOnWires();
+}
+
 void SceneItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     if (qobject_cast<Scene*>(scene())->mode() == Scene::MoveItem) {
         if (checkCollision()) {
             moveWithWires(oldPosition);
             hideOverlayItem();
         } else if (myType == Switch && oldPosition == scenePos()) {
-            on = !on;
-            changeSvg();
-            updateSignalsOnWires();
+            reverseState();
         }
         setZValue(0.0);
     }
@@ -169,7 +187,6 @@ void SceneItem::updateSignalsOnWires() {
 
     while (wires.hasNext()) {
         Line *wire = wires.next();
-        qDebug() << "wire out " << wire;
         wire->setState(on);
     }
 }
@@ -191,7 +208,6 @@ void SceneItem::processIncomingSignals() {
     while (wires.hasNext()) {
         Line *wire = wires.next();
 
-        qDebug() << "wire in " << wire;
         switch (myType) {
             case Led:
                 if (wire->activeSignal())

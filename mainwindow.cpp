@@ -41,6 +41,7 @@ void MainWindow::unsetButtons() {
     ui->actionLed->setChecked(false);
     ui->actionLine->setChecked(false);
     ui->actionAnd->setChecked(false);
+    ui->actionOscillator->setChecked(false);
 }
 
 void MainWindow::on_actionSelect_triggered()
@@ -89,4 +90,12 @@ void MainWindow::on_actionAnd_triggered()
     ui->actionAnd->setChecked(true);
     scene->setMode(Scene::InsertItem);
     scene->setItemType(SceneItem::AndGate);
+}
+
+void MainWindow::on_actionOscillator_triggered()
+{
+    unsetButtons();
+    ui->actionOscillator->setChecked(true);
+    scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::Oscillator);
 }

@@ -50,6 +50,7 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
             if (!item->checkCollision()) {
                 item->setZValue(0.0);
                 item->lockOpacity(1.0);
+                item->initAfterCreation();
                 item = NULL;
             }
         case InsertLine:

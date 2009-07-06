@@ -27,6 +27,7 @@ private:
     QString viewStyleSheet;
 
 private slots:
+    void on_actionOscillator_triggered();
     void on_actionAnd_triggered();
     void on_actionUseOpenGL_triggered(bool checked);
     void on_actionLine_triggered();
