@@ -14,7 +14,8 @@ public:
     Scene(QObject *parent = 0);
 
 public slots:
-    void setMode(Mode mode) {this->mode = mode;}
+    void setMode(Mode mode) {myMode = mode;}
+    Mode mode() {return myMode;}
     void deleteItem();
 
 protected:
@@ -24,8 +25,7 @@ protected:
 
 private:
      SceneItem *item;
-     QGraphicsRectItem *overlayItem;
-     Mode mode;
+     Mode myMode;
 };
 
 #endif // SCENE_H
