@@ -24,8 +24,10 @@ private:
     Ui::MainWindow *ui;
     Scene *scene;
     QSlider *slider;
+    QString viewStyleSheet;
 
 private slots:
+    void on_actionUseOpenGL_triggered(bool checked);
     void on_actionLine_triggered();
     void on_actionLed_triggered();
     void on_actionSwitch_triggered();

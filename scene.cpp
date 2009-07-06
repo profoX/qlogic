@@ -70,6 +70,7 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 
 void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     QList<QGraphicsItem *> collidingItems;
+    QPointF newPosition;
     switch (myMode) {
         case InsertItem:
             if (!item) {
@@ -77,8 +78,9 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                 item->setZValue(1.0);
                 addItem(item);
             }
-            item->setPos(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50,
-                         mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50);
+            newPosition.setX(static_cast<int>(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50));
+            newPosition.setY(static_cast<int>(mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50));
+            item->setPos(newPosition);
             item->checkCollision();
             break;
         case InsertLine:

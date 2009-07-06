@@ -7,6 +7,7 @@
 
 #include "sceneitem.h"
 #include "scene.h"
+#include "line.h"
 
 SceneItem::SceneItem(ItemType type) {
     myType = type;
@@ -55,6 +56,10 @@ bool SceneItem::checkCollision() {
     }
 }
 
+void SceneItem::addWire(Line *wire) {
+    connectedWires << wire;
+}
+
 void SceneItem::deleteItem() {
     timeLine->setFrameRange(static_cast<int>(opacity() * 100.0), 0);
     connect(timeLine, SIGNAL(finished()), this, SLOT(deleteLater()));
@@ -74,8 +79,9 @@ void SceneItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 
 void SceneItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     if (qobject_cast<Scene*>(scene())->mode() == Scene::MoveItem) {
-        setPos(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50,
-               mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50);
+        QPointF newPosition(static_cast<int>(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50),
+                            static_cast<int>(mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50));
+        setPos(newPosition);
         checkCollision();
     }
 }
