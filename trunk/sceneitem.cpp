@@ -21,7 +21,7 @@ void SceneItem::initItem() {
 
     setOpacity(0.0);
     timeLine = new QTimeLine(333, this);
-    timeLine->setFrameRange(0, 75);
+    timeLine->setFrameRange(0, maxGhostOpacity);
     connect(timeLine, SIGNAL(frameChanged(int)), this, SLOT(setItemOpacity(int)));
     timeLine->start();
 }
@@ -85,7 +85,8 @@ void SceneItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 }
 
 void SceneItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-    if (qobject_cast<Scene*>(scene())->mode() == Scene::MoveItem) {
+    Scene::Mode mode = qobject_cast<Scene*>(scene())->mode();
+    if (mode == Scene::MoveItem) {
         QPointF newPosition(static_cast<int>(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50),
                             static_cast<int>(mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50));
         moveWithWires(newPosition);
@@ -158,4 +159,17 @@ void SceneItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         setSelected(true);
         myContextMenu->exec(event->screenPos());
     }
+}
+
+QList<SceneItem*> SceneItem::attachedDevices() {
+    QList<SceneItem *> devices;
+    QListIterator<Line*> inWires(attachedInWires);
+    QListIterator<Line*> outWires(attachedOutWires);
+
+    while (inWires.hasNext())
+        devices << inWires.next()->sender();
+    while (outWires.hasNext())
+        devices << outWires.next()->receiver();
+
+    return devices;
 }

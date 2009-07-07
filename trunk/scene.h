@@ -6,6 +6,8 @@
 #include "sceneitem.h"
 
 class QMenu;
+class BubbleItem;
+class SceneItem;
 
 class Scene : public QGraphicsScene
 {
@@ -28,7 +30,9 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:
+     SceneItem::SignalType validSignalTypesFromTo(SceneItem *from, SceneItem *to);
      SceneItem *item, *itemUnderLine;
+     BubbleItem *bubble;
      QGraphicsLineItem *line;
      Mode myMode;
      SceneItem::ItemType itemType;

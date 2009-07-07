@@ -4,18 +4,19 @@
 #include <QMenu>
 
 #include "scene.h"
-#include "sceneitem.h"
 #include "line.h"
 
 #include "inputdevice.h"
 #include "outputdevice.h"
 #include "logicgate.h"
+#include "bubbleitem.h"
 
 Scene::Scene(QMenu *menu, QObject *parent) : QGraphicsScene(parent) {
     item = NULL;
     line = NULL;
     itemUnderLine = NULL;
     itemMenu = menu;
+    bubble = NULL;
 }
 
 void Scene::setMode(Mode mode) {
@@ -41,8 +42,15 @@ void Scene::deleteItem() {
 QGraphicsItem *Scene::collidingItemAt(QPointF pos) {
     if (itemAt(pos) == 0)
         return NULL;
-    else if (itemAt(pos)->data(0).toString() == "Item")
-        return itemAt(pos);
+    else {
+        QListIterator<QGraphicsItem*> colliding(items(pos));
+        QGraphicsItem *collidingItem;
+        while (colliding.hasNext()) {
+            collidingItem = colliding.next();
+            if (collidingItem->data(0).toString() == "Item")
+                return collidingItem;
+        }
+    }
     return NULL;
 }
 
@@ -109,10 +117,47 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
             if (line) {
                 QLineF newLine;
                 QGraphicsItem *collidingItem = collidingItemAt(mouseEvent->scenePos());
-                if (collidingItem)
+                if (collidingItem && itemUnderLine && (collidingItem != itemUnderLine) &&
+                    qgraphicsitem_cast<SceneItem*>(collidingItem)->signalType() != SceneItem::Invalid) {
                     newLine.setPoints(line->line().p1(), collidingItem->pos() + collidingItem->boundingRect().center());
-                else
+
+                    if (!bubble) {
+                        SceneItem::SignalType validSignalTypes = validSignalTypesFromTo(itemUnderLine, qgraphicsitem_cast<SceneItem*>(collidingItem));
+                        bubble = new BubbleItem(validSignalTypes == SceneItem::Invalid ? BubbleItem::Invalid : BubbleItem::Input);
+                        bubble->setZValue(2.0);
+                        addItem(bubble);
+                    }
+
+                    int widthMod = (collidingItem->boundingRect().width() / 2 - bubble->boundingRect().width() / 2);
+                    int heightMod = (collidingItem->boundingRect().height() / 2 - bubble->boundingRect().height() / 2);
+                    if (bubble->icon() == BubbleItem::Invalid) {
+                        bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() + heightMod);
+                    } else {
+                        // Calculate shortest connection
+                        int side = SceneItem::None;
+                        int right = collidingItem->x() - (itemUnderLine->x() + itemUnderLine->boundingRect().width() / 2);
+                        int bottom = collidingItem->y() - (itemUnderLine->y() + itemUnderLine->boundingRect().height() / 2);
+
+                        if (qAbs(right) >= qAbs(bottom))
+                            side = (right < 0 ? SceneItem::Left : SceneItem::Right);
+                        else
+                            side = (bottom < 0 ? SceneItem::Top : SceneItem::Bottom);
+                        if (side == SceneItem::Right)
+                            bubble->setPos(collidingItem->x() - bubble->boundingRect().width(), collidingItem->y() + heightMod);
+                        else if (side == SceneItem::Left)
+                            bubble->setPos(collidingItem->x() + collidingItem->boundingRect().width(), collidingItem->y() + heightMod);
+                        else if (side == SceneItem::Bottom)
+                            bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() - bubble->boundingRect().height());
+                        else if (side == SceneItem::Top)
+                            bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() + collidingItem->boundingRect().height());
+                    }
+                } else {
+                    if (bubble) {
+                        bubble->deleteItem();
+                        bubble = NULL;
+                    }
                     newLine.setPoints(line->line().p1(), mouseEvent->scenePos());
+                }
                 line->setLine(newLine);
             }
             break;
@@ -127,22 +172,38 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
         case InsertLine:
             if (line) {
                 SceneItem *collidingItem = qgraphicsitem_cast<SceneItem*>(collidingItemAt(mouseEvent->scenePos()));
-                if (collidingItem) {
+                if (collidingItem && itemUnderLine && (collidingItem != itemUnderLine) &&
+                    qgraphicsitem_cast<SceneItem*>(collidingItem)->signalType() != SceneItem::Invalid) {
                     // Both can't be sender and both can't be receiver
                     if (!((itemUnderLine->signalType() == SceneItem::Sender && collidingItem->signalType() == SceneItem::Sender) ||
                         (itemUnderLine->signalType() == SceneItem::Receiver && collidingItem->signalType() == SceneItem::Receiver))) {
-                        Line *wire = new Line(itemUnderLine, collidingItem);
-                        wire->setLine(line->line());
-                        addItem(wire);
+                        // There's no point in connecting devices which are already connected
+                        if (!itemUnderLine->attachedDevices().contains(collidingItem)) {
+                            Line *wire = new Line(itemUnderLine, collidingItem);
+                            wire->setLine(line->line());
+                            addItem(wire);
+                        } else
+                            qDebug() << "User tried to double-wire";
                     }
                 }
                 delete line;
                 line = NULL;
                 itemUnderLine = NULL;
+                if (bubble) {
+                    bubble->deleteItem();
+                    bubble = NULL;
+                }
             }
             break;
         default:
             break;
     }
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
+}
+
+SceneItem::SignalType Scene::validSignalTypesFromTo(SceneItem *from, SceneItem *to) {
+    if ((from->signalType() == to->signalType() && to->signalType() != SceneItem::SenderAndReceiver))
+        return SceneItem::Invalid;
+    else
+        return to->signalType();
 }
