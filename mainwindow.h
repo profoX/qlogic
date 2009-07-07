@@ -21,12 +21,18 @@ public:
 
 private:
     void unsetButtons();
+    void createScene();
     Ui::MainWindow *ui;
     Scene *scene;
     QSlider *slider;
     QString viewStyleSheet;
 
+    QAction *removeItem;
+    QAction *removeItemWithWires;
+    QMenu *itemMenu;
+
 private slots:
+    void on_actionNand_triggered();
     void on_actionOscillator_triggered();
     void on_actionAnd_triggered();
     void on_actionUseOpenGL_triggered(bool checked);

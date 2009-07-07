@@ -10,13 +10,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-    scene = new Scene(this);
-    scene->setSceneRect(QRectF(0, 0, 10000, 10000));
-    scene->setMode(Scene::InsertItem);
-    scene->setItemType(SceneItem::Switch);
-    ui->view->setScene(scene);
-    connect(ui->view, SIGNAL(mouseLeftView()), scene, SLOT(deleteItem()));
-
+    createScene();
     QWidget *spacer = new QWidget(ui->toolBar);
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ZoomWidget *zoomWidget = new ZoomWidget(ui->toolBar);
@@ -24,11 +18,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->toolBar->addWidget(zoomWidget);
     connect(zoomWidget->slider(), SIGNAL(valueChanged(int)), ui->view, SLOT(zoom(int)));
     ui->view->zoom(zoomWidget->slider()->value());
-
     ui->view->horizontalScrollBar()->setValue(0);
     ui->view->verticalScrollBar()->setValue(0);
-
     viewStyleSheet = ui->view->styleSheet();
+}
+
+void MainWindow::createScene() {
+    removeItem = new QAction(tr("Remove item (but keep wires)"), this);
+    removeItemWithWires = new QAction(tr("Remove item (and remove wires)"), this);
+    itemMenu = new QMenu(this);
+    itemMenu->addAction(removeItem);
+    itemMenu->addAction(removeItemWithWires);
+
+    scene = new Scene(itemMenu, this);
+    scene->setSceneRect(QRectF(0, 0, 10000, 10000));
+    scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::Switch);
+    ui->view->setScene(scene);
+    connect(ui->view, SIGNAL(mouseLeftView()), scene, SLOT(deleteItem()));
 }
 
 MainWindow::~MainWindow() {
@@ -42,6 +49,7 @@ void MainWindow::unsetButtons() {
     ui->actionLine->setChecked(false);
     ui->actionAnd->setChecked(false);
     ui->actionOscillator->setChecked(false);
+    ui->actionNand->setChecked(false);
 }
 
 void MainWindow::on_actionSelect_triggered()
@@ -98,4 +106,12 @@ void MainWindow::on_actionOscillator_triggered()
     ui->actionOscillator->setChecked(true);
     scene->setMode(Scene::InsertItem);
     scene->setItemType(SceneItem::Oscillator);
+}
+
+void MainWindow::on_actionNand_triggered()
+{
+    unsetButtons();
+    ui->actionNand->setChecked(true);
+    scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::NandGate);
 }

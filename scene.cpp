@@ -1,15 +1,17 @@
 #include <QDebug>
 
 #include <QGraphicsSceneMouseEvent>
+#include <QMenu>
 
 #include "scene.h"
 #include "sceneitem.h"
 #include "line.h"
 
-Scene::Scene(QObject *parent) : QGraphicsScene(parent) {
+Scene::Scene(QMenu *menu, QObject *parent) : QGraphicsScene(parent) {
     item = NULL;
     line = NULL;
     itemUnderLine = NULL;
+    itemMenu = menu;
 }
 
 void Scene::setMode(Mode mode) {
@@ -75,10 +77,11 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     switch (myMode) {
         case InsertItem:
             if (!item) {
-                item = new SceneItem(itemType);
+                item = new SceneItem(itemType, itemMenu);
                 item->setZValue(1.0);
                 addItem(item);
             }
+            // Move per 50 pixels
             newPosition.setX(static_cast<int>(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50));
             newPosition.setY(static_cast<int>(mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50));
             item->setPos(newPosition);
