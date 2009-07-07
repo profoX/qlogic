@@ -14,7 +14,7 @@ OutputDevice::OutputDevice(ItemType type, QMenu *contextMenu)
 void OutputDevice::processIncomingSignals() {
     QListIterator<Line*> wires(attachedInWires);
     bool outSignal = false;
-    qDebug() << "processIncomingSignals()";
+    qDebug() << "processIncomingSignals()" << myType;
 
     while (wires.hasNext()) {
         Line *wire = wires.next();
