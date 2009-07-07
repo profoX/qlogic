@@ -144,7 +144,7 @@ void SceneItem::lockOpacity(qreal opacity) {
 
 void SceneItem::updateSignalsOnWires() {
     QListIterator<Line*> wires(attachedOutWires);
-    qDebug() << "updateSignalsOnWires()";
+    qDebug() << "updateSignalsOnWires()" << myType;
     while (wires.hasNext()) {
         Line *wire = wires.next();
         wire->setState(on);

@@ -16,7 +16,7 @@ LogicGate::LogicGate(ItemType type, QMenu *contextMenu)
 void LogicGate::processIncomingSignals() {
     QListIterator<Line*> wires(attachedInWires);
     bool outSignal;
-    qDebug() << "processIncomingSignals()";
+    qDebug() << "processIncomingSignals()" << myType;
 
     switch (myType) {
         case AndGate:
@@ -45,9 +45,11 @@ void LogicGate::processIncomingSignals() {
     if (inverted)
         outSignal = !outSignal;
 
-    on = outSignal;
-    setSvgs();
-    updateSignalsOnWires();
+    if (on != outSignal) {
+        on = outSignal;
+        setSvgs();
+        updateSignalsOnWires();
+    }
 }
 
 void LogicGate::setSvgs() {
