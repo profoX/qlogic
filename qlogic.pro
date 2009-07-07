@@ -11,13 +11,19 @@ SOURCES += main.cpp \
     sceneitem.cpp \
     view.cpp \
     zoomwidget.cpp \
-    line.cpp
+    line.cpp \
+    inputdevice.cpp \
+    outputdevice.cpp \
+    logicgate.cpp
 HEADERS += mainwindow.h \
     scene.h \
     sceneitem.h \
     view.h \
     zoomwidget.h \
-    line.h
+    line.h \
+    inputdevice.h \
+    outputdevice.h \
+    logicgate.h
 FORMS += mainwindow.ui \
     zoomwidget.ui
 RESOURCES += qlogic.qrc

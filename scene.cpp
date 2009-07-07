@@ -7,6 +7,10 @@
 #include "sceneitem.h"
 #include "line.h"
 
+#include "inputdevice.h"
+#include "outputdevice.h"
+#include "logicgate.h"
+
 Scene::Scene(QMenu *menu, QObject *parent) : QGraphicsScene(parent) {
     item = NULL;
     line = NULL;
@@ -77,7 +81,21 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     switch (myMode) {
         case InsertItem:
             if (!item) {
-                item = new SceneItem(itemType, itemMenu);
+                switch (itemType) {
+                    case SceneItem::Switch:
+                    case SceneItem::Oscillator:
+                        item = new InputDevice(itemType, itemMenu);
+                        break;
+                    case SceneItem::Led:
+                        item = new OutputDevice(itemType, itemMenu);
+                        break;
+                    case SceneItem::AndGate:
+                    case SceneItem::NandGate:
+                        item = new LogicGate(itemType, itemMenu);
+                        break;
+                    default:
+                        break;
+                }
                 item->setZValue(1.0);
                 addItem(item);
             }

@@ -16,7 +16,7 @@ public:
     enum SignalType {Sender, Receiver, SenderAndReceiver};
     enum {Type = UserType + 1};
 
-    SceneItem(ItemType type, QMenu *contextMenu);
+    void initItem();
     void initAfterCreation();
     int type() const {return Type;}
     ItemType itemType() const {return myType;}
@@ -39,6 +39,9 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    ItemType myType;
+    QMenu *myContextMenu;
+    SignalType mySignalType;
 
 private slots:
     void setItemOpacity(int opacity);
@@ -48,8 +51,6 @@ private:
     void moveWithWires(QPointF newPosition);
     void changeSvg();
 
-    ItemType myType;
-    SignalType mySignalType;
     int currentOpacity;
     QTimeLine *timeLine, *oscillator;
     bool on;
@@ -57,7 +58,6 @@ private:
     QPointF oldPosition;
     QList<Line*> attachedInWires;
     QList<Line*> attachedOutWires;
-    QMenu *myContextMenu;
     bool ghost;
 };
 
