@@ -17,7 +17,7 @@ public:
     enum {Type = UserType + 1};
 
     void initItem();
-    void initAfterCreation();
+    virtual void initAfterCreation();
     int type() const {return Type;}
     ItemType itemType() const {return myType;}
     SignalType signalType() const {return mySignalType;}
@@ -29,7 +29,7 @@ public:
     void lockOpacity(qreal opacity);
     void updateSignalsOnWires();
     bool outSignal() {return on;}
-    void processIncomingSignals();
+    virtual void processIncomingSignals() {}
 
 public slots:
     void deleteItem();
@@ -39,9 +39,13 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    virtual void setSvgs() {}
+    void changeSvg(const QStringList &svgs);
     ItemType myType;
     QMenu *myContextMenu;
     SignalType mySignalType;
+    QList<Line*> attachedInWires;
+    bool on;
 
 private slots:
     void setItemOpacity(int opacity);
@@ -49,14 +53,10 @@ private slots:
 
 private:
     void moveWithWires(QPointF newPosition);
-    void changeSvg();
-
     int currentOpacity;
-    QTimeLine *timeLine, *oscillator;
-    bool on;
+    QTimeLine *timeLine;
     QGraphicsRectItem *overlayItem;
     QPointF oldPosition;
-    QList<Line*> attachedInWires;
     QList<Line*> attachedOutWires;
     bool ghost;
 };

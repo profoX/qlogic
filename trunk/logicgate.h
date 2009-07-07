@@ -7,6 +7,13 @@ class LogicGate : public SceneItem
 {
 public:
     LogicGate(ItemType type, QMenu *contextMenu);
+    void processIncomingSignals();
+
+protected:
+    void setSvgs();
+
+private:
+    bool inverted;
 };
 
 #endif // LOGICGATE_H

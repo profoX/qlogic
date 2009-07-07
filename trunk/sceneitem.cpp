@@ -16,7 +16,7 @@ void SceneItem::initItem() {
     setData(1, QString("Ghost"));
     overlayItem = new QGraphicsRectItem(this);
     setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren | QGraphicsItem::ItemIsMovable);
-    changeSvg();
+    setSvgs();
     setData(0, QVariant("Item"));
 
     setOpacity(0.0);
@@ -29,12 +29,6 @@ void SceneItem::initItem() {
 void SceneItem::initAfterCreation() {
     ghost = false;
     setData(1, QString("Solid"));
-    if (myType == Oscillator) {
-        oscillator = new QTimeLine(500, this);
-        connect(oscillator, SIGNAL(finished()), this, SLOT(reverseState()));
-        connect(oscillator, SIGNAL(finished()), oscillator, SLOT(start()));
-        oscillator->start();
-    }
 }
 
 void SceneItem::showOverlayItem() {
@@ -111,44 +105,18 @@ void SceneItem::moveWithWires(QPointF newPosition) {
     }
 }
 
-void SceneItem::changeSvg() {
-    QStringList svgs;
+void SceneItem::changeSvg(const QStringList &svgs) {    
     QSvgRenderer *sharedRenderer;
-
     renderer()->deleteLater();
-    switch (myType) {
-        case Switch:
-            svgs << ":/res/img/switch_on.svg" << ":/res/img/switch.svg";
-            break;
-        case Oscillator:
-            svgs << ":/res/img/oscillator.svg" << ":/res/img/oscillator.svg";
-            break;
-        case Led:
-            svgs << ":/res/img/led_on.svg" << ":/res/img/led.svg";
-            break;
-        case AndGate:
-            svgs << ":/res/img/andgate.svg" << ":/res/img/andgate.svg";
-            break;
-        case NandGate:
-            svgs << ":/res/img/nandgate.svg" << ":/res/img/nandgate.svg";
-            break;
-        default:
-            break;
-    }
-
-    if (on)
-        sharedRenderer = new QSvgRenderer(svgs[0], this);
-    else
-        sharedRenderer = new QSvgRenderer(svgs[1], this);
-    qDebug() << "on: " << on << " svgs0 " << svgs[0] << " shared renderer " << sharedRenderer;
-
+    sharedRenderer = new QSvgRenderer(on ? svgs[0] : svgs[1], this);
+    qDebug() << "on: " << on << " svgs[0]: " << svgs[0] << " shared renderer: " << sharedRenderer;
     setSharedRenderer(sharedRenderer);
 }
 
 void SceneItem::reverseState() {
     qDebug() << "reverseState()";
     on = !on;
-    changeSvg();
+    setSvgs();
     updateSignalsOnWires();
 }
 
@@ -181,46 +149,6 @@ void SceneItem::updateSignalsOnWires() {
         Line *wire = wires.next();
         wire->setState(on);
     }
-}
-
-void SceneItem::processIncomingSignals() {
-    QListIterator<Line*> wires(attachedInWires);
-    bool outSignal;
-    qDebug() << "processIncomingSignals()";
-    switch (myType) {
-        case AndGate:
-        case NandGate:
-            outSignal = true;
-            break;
-        default:
-            outSignal = false;
-            break;
-    }
-
-    while (wires.hasNext()) {
-        Line *wire = wires.next();
-
-        switch (myType) {
-            case Led:
-                if (wire->activeSignal())
-                    outSignal = true;
-                break;
-            case AndGate:
-            case NandGate:
-                if (!wire->activeSignal())
-                    outSignal = false;
-                break;
-            default:
-                break;
-        }
-    }
-
-    if (myType == NandGate)
-        outSignal = !outSignal;
-
-    on = outSignal;
-    changeSvg();
-    updateSignalsOnWires();
 }
 
 void SceneItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
