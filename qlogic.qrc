@@ -10,5 +10,7 @@
         <file>img/andgate.svg</file>
         <file>img/oscillator.svg</file>
         <file>img/nandgate.svg</file>
+        <file>img/error.svg</file>
+        <file>img/input.svg</file>
     </qresource>
 </RCC>

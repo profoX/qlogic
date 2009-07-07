@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     line.cpp \
     inputdevice.cpp \
     outputdevice.cpp \
-    logicgate.cpp
+    logicgate.cpp \
+    bubbleitem.cpp
 HEADERS += mainwindow.h \
     scene.h \
     sceneitem.h \
@@ -23,7 +24,8 @@ HEADERS += mainwindow.h \
     line.h \
     inputdevice.h \
     outputdevice.h \
-    logicgate.h
+    logicgate.h \
+    bubbleitem.h
 FORMS += mainwindow.ui \
     zoomwidget.ui
 RESOURCES += qlogic.qrc

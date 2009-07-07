@@ -12,8 +12,12 @@ class SceneItem : public QGraphicsSvgItem
     Q_OBJECT
 
 public:
-    enum ItemType {Switch, Oscillator, Led, AndGate, NandGate};
-    enum SignalType {Sender, Receiver, SenderAndReceiver};
+    enum ItemType {Switch, Oscillator,
+                   Led,
+                   AndGate, NandGate,
+                   Bubble};
+    enum SignalType {Invalid = 0x0, Sender = 0x1, Receiver = 0x2, SenderAndReceiver = 0x4};
+    enum Sides {None = 0x0, Left = 0x1, Top = 0x2, Right = 0x4, Bottom = 0x8};
     enum {Type = UserType + 1};
 
     void initItem();
@@ -30,6 +34,7 @@ public:
     void updateSignalsOnWires();
     bool outSignal() {return on;}
     virtual void processIncomingSignals() {}
+    QList<SceneItem*> attachedDevices();
 
 public slots:
     void deleteItem();
@@ -46,6 +51,8 @@ protected:
     SignalType mySignalType;
     QList<Line*> attachedInWires;
     bool on;
+    int inputSides, outputSides;
+    int maxGhostOpacity;
 
 private slots:
     void setItemOpacity(int opacity);
