@@ -4,13 +4,15 @@
 #include <QTimeLine>
 #include <QGraphicsSceneMouseEvent>
 #include <QBrush>
+#include <QMenu>
 
 #include "sceneitem.h"
 #include "scene.h"
 #include "line.h"
 
-SceneItem::SceneItem(ItemType type) {
+SceneItem::SceneItem(ItemType type, QMenu *contextMenu) {
     myType = type;
+    myContextMenu = contextMenu;
 
     switch (myType) {
         case Switch:
@@ -21,6 +23,7 @@ SceneItem::SceneItem(ItemType type) {
             mySignalType = Receiver;
             break;
         case AndGate:
+        case NandGate:
             mySignalType = SenderAndReceiver;
             break;
         default:
@@ -28,6 +31,8 @@ SceneItem::SceneItem(ItemType type) {
     }
 
     on = false;
+    ghost = true;
+    setData(1, QString("Ghost"));
     overlayItem = new QGraphicsRectItem(this);
     setFlags(QGraphicsItem::ItemDoesntPropagateOpacityToChildren | QGraphicsItem::ItemIsMovable);
     changeSvg();
@@ -41,6 +46,8 @@ SceneItem::SceneItem(ItemType type) {
 }
 
 void SceneItem::initAfterCreation() {
+    ghost = false;
+    setData(1, QString("Solid"));
     if (myType == Oscillator) {
         oscillator = new QTimeLine(500, this);
         connect(oscillator, SIGNAL(finished()), this, SLOT(reverseState()));
@@ -67,8 +74,7 @@ bool SceneItem::checkCollision() {
         QListIterator<QGraphicsItem*> colliding(collidingItems());
         while (colliding.hasNext()) {
             QGraphicsItem *collidingItem = colliding.next();
-            if (collidingItem != overlayItem && !attachedInWires.contains(qgraphicsitem_cast<Line*>(collidingItem)) &&
-                !attachedOutWires.contains(qgraphicsitem_cast<Line*>(collidingItem))) {
+            if (collidingItem != overlayItem && collidingItem->data(0) != "Line" && collidingItem->data(1) == "Solid") {
                 showOverlayItem();
                 return true;
             }
@@ -142,6 +148,9 @@ void SceneItem::changeSvg() {
         case AndGate:
             svgs << ":/res/img/andgate.svg" << ":/res/img/andgate.svg";
             break;
+        case NandGate:
+            svgs << ":/res/img/nandgate.svg" << ":/res/img/nandgate.svg";
+            break;
         default:
             break;
     }
@@ -150,10 +159,13 @@ void SceneItem::changeSvg() {
         sharedRenderer = new QSvgRenderer(svgs[0], this);
     else
         sharedRenderer = new QSvgRenderer(svgs[1], this);
+    qDebug() << "on: " << on << " svgs0 " << svgs[0] << " shared renderer " << sharedRenderer;
+
     setSharedRenderer(sharedRenderer);
 }
 
 void SceneItem::reverseState() {
+    qDebug() << "reverseState()";
     on = !on;
     changeSvg();
     updateSignalsOnWires();
@@ -182,9 +194,8 @@ void SceneItem::lockOpacity(qreal opacity) {
 }
 
 void SceneItem::updateSignalsOnWires() {
-    // Update signal for attached wires
     QListIterator<Line*> wires(attachedOutWires);
-
+    qDebug() << "updateSignalsOnWires()";
     while (wires.hasNext()) {
         Line *wire = wires.next();
         wire->setState(on);
@@ -192,12 +203,12 @@ void SceneItem::updateSignalsOnWires() {
 }
 
 void SceneItem::processIncomingSignals() {
-    // Update signal for attached wires
     QListIterator<Line*> wires(attachedInWires);
     bool outSignal;
-
+    qDebug() << "processIncomingSignals()";
     switch (myType) {
         case AndGate:
+        case NandGate:
             outSignal = true;
             break;
         default:
@@ -214,6 +225,7 @@ void SceneItem::processIncomingSignals() {
                     outSignal = true;
                 break;
             case AndGate:
+            case NandGate:
                 if (!wire->activeSignal())
                     outSignal = false;
                 break;
@@ -222,7 +234,19 @@ void SceneItem::processIncomingSignals() {
         }
     }
 
+    if (myType == NandGate)
+        outSignal = !outSignal;
+
     on = outSignal;
     changeSvg();
     updateSignalsOnWires();
+}
+
+void SceneItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    if (!ghost) {
+        scene()->clearSelection();
+        setSelected(true);
+        myContextMenu->exec(event->screenPos());
+    }
 }

@@ -5,17 +5,18 @@
 
 class QTimeLine;
 class Line;
+class QMenu;
 
 class SceneItem : public QGraphicsSvgItem
 {
     Q_OBJECT
 
 public:
-    enum ItemType {Switch, Oscillator, Led, AndGate};
+    enum ItemType {Switch, Oscillator, Led, AndGate, NandGate};
     enum SignalType {Sender, Receiver, SenderAndReceiver};
     enum {Type = UserType + 1};
 
-    SceneItem(ItemType type);
+    SceneItem(ItemType type, QMenu *contextMenu);
     void initAfterCreation();
     int type() const {return Type;}
     ItemType itemType() const {return myType;}
@@ -37,6 +38,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
 private slots:
     void setItemOpacity(int opacity);
@@ -55,6 +57,8 @@ private:
     QPointF oldPosition;
     QList<Line*> attachedInWires;
     QList<Line*> attachedOutWires;
+    QMenu *myContextMenu;
+    bool ghost;
 };
 
 #endif // SCENEITEM_H

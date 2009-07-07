@@ -5,13 +5,15 @@
 
 #include "sceneitem.h"
 
+class QMenu;
+
 class Scene : public QGraphicsScene
 {
     Q_OBJECT
 
 public:
     enum Mode {InsertItem, InsertLine, MoveItem};
-    Scene(QObject *parent = 0);
+    Scene(QMenu *menu, QObject *parent = 0);
     void setItemType(SceneItem::ItemType type) {itemType = type;}
 
 public slots:
@@ -30,6 +32,7 @@ private:
      QGraphicsLineItem *line;
      Mode myMode;
      SceneItem::ItemType itemType;
+     QMenu *itemMenu;
 };
 
 #endif // SCENE_H

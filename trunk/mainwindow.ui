@@ -24,6 +24,9 @@
        <string notr="true">background: url(&quot;:/res/img/bg.png&quot;) qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(255, 255, 255, 255), stop:1 rgba(180, 180, 180, 255));
 border: none;</string>
       </property>
+      <property name="renderHints">
+       <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+      </property>
      </widget>
     </item>
    </layout>
@@ -53,8 +56,14 @@ border: none;</string>
      <string>&amp;Logic</string>
     </property>
     <addaction name="actionSelect"/>
+    <addaction name="actionLine"/>
+    <addaction name="separator"/>
+    <addaction name="actionAnd"/>
+    <addaction name="actionNand"/>
     <addaction name="separator"/>
     <addaction name="actionSwitch"/>
+    <addaction name="actionOscillator"/>
+    <addaction name="actionLed"/>
    </widget>
    <widget class="QMenu" name="menu_Simulation">
     <property name="title">
@@ -79,6 +88,9 @@ border: none;</string>
      <bold>true</bold>
     </font>
    </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
    <property name="iconSize">
     <size>
      <width>48</width>
@@ -98,12 +110,12 @@ border: none;</string>
    <addaction name="actionLine"/>
    <addaction name="separator"/>
    <addaction name="actionAnd"/>
+   <addaction name="actionNand"/>
    <addaction name="separator"/>
    <addaction name="actionSwitch"/>
    <addaction name="actionOscillator"/>
    <addaction name="actionLed"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionSwitch">
    <property name="checkable">
     <bool>true</bool>
@@ -191,6 +203,18 @@ border: none;</string>
    </property>
    <property name="text">
     <string>&amp;Oscillator</string>
+   </property>
+  </action>
+  <action name="actionNand">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qlogic.qrc">
+     <normaloff>:/res/img/nandgate.svg</normaloff>:/res/img/nandgate.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Nand</string>
    </property>
   </action>
  </widget>
