@@ -10,26 +10,7 @@
 #include "scene.h"
 #include "line.h"
 
-SceneItem::SceneItem(ItemType type, QMenu *contextMenu) {
-    myType = type;
-    myContextMenu = contextMenu;
-
-    switch (myType) {
-        case Switch:
-        case Oscillator:
-            mySignalType = Sender;
-            break;
-        case Led:
-            mySignalType = Receiver;
-            break;
-        case AndGate:
-        case NandGate:
-            mySignalType = SenderAndReceiver;
-            break;
-        default:
-            break;
-    }
-
+void SceneItem::initItem() {
     on = false;
     ghost = true;
     setData(1, QString("Ghost"));
