@@ -14,7 +14,7 @@ class SceneItem : public QGraphicsSvgItem
 public:
     enum ItemType {Switch, Oscillator,
                    Led,
-                   AndGate, NandGate,
+                   AndGate, NandGate, OrGate, NorGate, NotGate,
                    Bubble};
     enum SignalType {Invalid = 0x0, Sender = 0x1, Receiver = 0x2, SenderAndReceiver = 0x4};
     enum Sides {None = 0x0, Left = 0x1, Top = 0x2, Right = 0x4, Bottom = 0x8};

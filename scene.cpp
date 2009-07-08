@@ -99,6 +99,9 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                         break;
                     case SceneItem::AndGate:
                     case SceneItem::NandGate:
+                    case SceneItem::OrGate:
+                    case SceneItem::NorGate:
+                    case SceneItem::NotGate:
                         item = new LogicGate(itemType, itemMenu);
                         break;
                     default:

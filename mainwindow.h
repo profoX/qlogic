@@ -32,6 +32,9 @@ private:
     QMenu *itemMenu;
 
 private slots:
+    void on_actionNot_triggered();
+    void on_actionNor_triggered();
+    void on_actionOr_triggered();
     void on_actionNand_triggered();
     void on_actionOscillator_triggered();
     void on_actionAnd_triggered();
