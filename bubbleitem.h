@@ -6,7 +6,7 @@
 class BubbleItem : public SceneItem
 {
 public:
-    enum BubbleIcon {Invalid, Input};
+    enum BubbleIcon {Invalid, Input, Output};
     BubbleItem(BubbleIcon icon);
     BubbleIcon icon() {return myIcon;}
 

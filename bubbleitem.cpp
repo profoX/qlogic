@@ -20,6 +20,9 @@ void BubbleItem::setSvgs() {
         case Input:
             svgs << ":/res/img/input.svg" << ":/res/img/input.svg";
             break;
+        case Output:
+            svgs << ":/res/img/output.svg" << ":/res/img/output.svg";
+            break;
     }
     SceneItem::changeSvg(svgs);
 }

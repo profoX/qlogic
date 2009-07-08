@@ -35,6 +35,8 @@ public:
     bool outSignal() {return on;}
     virtual void processIncomingSignals() {}
     QList<SceneItem*> attachedDevices();
+    int inputSides() {return myInputSides;}
+    int outputSides() {return myOutputSides;}
 
 public slots:
     void deleteItem();
@@ -51,7 +53,7 @@ protected:
     SignalType mySignalType;
     QList<Line*> attachedInWires;
     bool on;
-    int inputSides, outputSides;
+    int myInputSides, myOutputSides;
     int maxGhostOpacity;
 
 private slots:
