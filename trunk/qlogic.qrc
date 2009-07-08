@@ -12,5 +12,6 @@
         <file>img/nandgate.svg</file>
         <file>img/error.svg</file>
         <file>img/input.svg</file>
+        <file>img/output.svg</file>
     </qresource>
 </RCC>

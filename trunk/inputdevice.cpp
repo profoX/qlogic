@@ -7,8 +7,8 @@ InputDevice::InputDevice(ItemType type, QMenu *contextMenu)
     myType = type;
     myContextMenu = contextMenu;
     mySignalType = SceneItem::Sender;
-    outputSides = SceneItem::Left|SceneItem::Top|SceneItem::Right|SceneItem::Bottom;
-    inputSides = None;
+    myOutputSides = SceneItem::Left|SceneItem::Top|SceneItem::Right|SceneItem::Bottom;
+    myInputSides = None;
     maxGhostOpacity = 75;
     initItem();
 }

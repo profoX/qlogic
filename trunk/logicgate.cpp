@@ -8,8 +8,8 @@ LogicGate::LogicGate(ItemType type, QMenu *contextMenu)
     myType = type;
     myContextMenu = contextMenu;
     mySignalType = SceneItem::SenderAndReceiver;
-    inputSides = SceneItem::Left;
-    outputSides = SceneItem::Right;
+    myInputSides = SceneItem::Left;
+    myOutputSides = SceneItem::Right;
     inverted = (myType == NandGate);
     maxGhostOpacity = 75;
     initItem();

@@ -116,14 +116,31 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
         case InsertLine:
             if (line) {
                 QLineF newLine;
-                QGraphicsItem *collidingItem = collidingItemAt(mouseEvent->scenePos());
+                SceneItem *collidingItem = qgraphicsitem_cast<SceneItem*>(collidingItemAt(mouseEvent->scenePos()));
                 if (collidingItem && itemUnderLine && (collidingItem != itemUnderLine) &&
                     qgraphicsitem_cast<SceneItem*>(collidingItem)->signalType() != SceneItem::Invalid) {
                     newLine.setPoints(line->line().p1(), collidingItem->pos() + collidingItem->boundingRect().center());
 
+                    SceneItem::SignalType validSignalTypes = validSignalTypesFromTo(itemUnderLine, collidingItem);
+                    BubbleItem::BubbleIcon icon;
+
+                    if (validSignalTypes == SceneItem::SenderAndReceiver) {
+                        // Only supports left and right; this suffices for our current sender/receiver items (logic gates)
+                        int rightFromCenter = mouseEvent->scenePos().x() - collidingItem->x() - collidingItem->boundingRect().width() / 2;
+                        icon = rightFromCenter < 0 ? BubbleItem::Input : BubbleItem::Output;
+                        if (bubble && bubble->icon() != icon) {
+                            bubble->deleteItem();
+                            bubble = NULL;
+                        }
+                    }
                     if (!bubble) {
-                        SceneItem::SignalType validSignalTypes = validSignalTypesFromTo(itemUnderLine, qgraphicsitem_cast<SceneItem*>(collidingItem));
-                        bubble = new BubbleItem(validSignalTypes == SceneItem::Invalid ? BubbleItem::Invalid : BubbleItem::Input);
+                        if (validSignalTypes == SceneItem::Invalid)
+                            icon = BubbleItem::Invalid;
+                        else if (validSignalTypes == SceneItem::Receiver)
+                            icon = BubbleItem::Input;
+                        else if (validSignalTypes == SceneItem::Sender)
+                            icon = BubbleItem::Output;
+                        bubble = new BubbleItem(icon);
                         bubble->setZValue(2.0);
                         addItem(bubble);
                     }
@@ -138,18 +155,32 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                         int right = collidingItem->x() - (itemUnderLine->x() + itemUnderLine->boundingRect().width() / 2);
                         int bottom = collidingItem->y() - (itemUnderLine->y() + itemUnderLine->boundingRect().height() / 2);
 
-                        if (qAbs(right) >= qAbs(bottom))
-                            side = (right < 0 ? SceneItem::Left : SceneItem::Right);
+                        int validSides = (bubble->icon() == BubbleItem::Input ? collidingItem->inputSides() : collidingItem->outputSides());
+                        int horizontalSide = SceneItem::None, verticalSide = SceneItem::None;
+
+                        if (validSides & SceneItem::Left && validSides & SceneItem::Right) // Horizontal
+                            horizontalSide = (right < 0 ? SceneItem::Right : SceneItem::Left);
+                        else if (validSides & SceneItem::Left || validSides & SceneItem::Right)
+                            horizontalSide = validSides & SceneItem::Left ? SceneItem::Left : SceneItem::Right;
+                        if (validSides & SceneItem::Top && validSides & SceneItem::Bottom) // Vertical
+                            verticalSide = (bottom < 0 ? SceneItem::Bottom : SceneItem::Top);
+                        else if (validSides & SceneItem::Top || validSides & SceneItem::Bottom)
+                            verticalSide = validSides & SceneItem::Top ? SceneItem::Top : SceneItem::Bottom;
+                        if (verticalSide && horizontalSide)
+                            side = (qAbs(right) >= qAbs(bottom) ? horizontalSide : verticalSide);
                         else
-                            side = (bottom < 0 ? SceneItem::Top : SceneItem::Bottom);
-                        if (side == SceneItem::Right)
+                            side = (horizontalSide ? horizontalSide : verticalSide);
+
+                        if (side == SceneItem::Left)
                             bubble->setPos(collidingItem->x() - bubble->boundingRect().width(), collidingItem->y() + heightMod);
-                        else if (side == SceneItem::Left)
+                        else if (side == SceneItem::Right)
                             bubble->setPos(collidingItem->x() + collidingItem->boundingRect().width(), collidingItem->y() + heightMod);
-                        else if (side == SceneItem::Bottom)
-                            bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() - bubble->boundingRect().height());
                         else if (side == SceneItem::Top)
+                            bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() - bubble->boundingRect().height());
+                        else if (side == SceneItem::Bottom)
                             bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() + collidingItem->boundingRect().height());
+                        else
+                            qDebug() << "could not find valid side!";
                     }
                 } else {
                     if (bubble) {
