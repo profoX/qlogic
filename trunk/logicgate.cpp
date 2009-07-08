@@ -10,7 +10,7 @@ LogicGate::LogicGate(ItemType type, QMenu *contextMenu)
     mySignalType = SceneItem::SenderAndReceiver;
     myInputSides = SceneItem::Left;
     myOutputSides = SceneItem::Right;
-    inverted = (myType == NandGate);
+    inverted = (myType == NandGate || myType == NorGate);
     maxGhostOpacity = 75;
     initItem();
 }
@@ -25,6 +25,13 @@ void LogicGate::processIncomingSignals() {
         case NandGate:
             outSignal = true;
             break;
+        case OrGate:
+        case NorGate:
+            outSignal = false;
+            break;
+        case NotGate:
+            outSignal = true;
+            break;
         default:
             outSignal = false;
             break;
@@ -37,6 +44,15 @@ void LogicGate::processIncomingSignals() {
             case AndGate:
             case NandGate:
                 if (!wire->activeSignal())
+                    outSignal = false;
+                break;
+            case OrGate:
+            case NorGate:
+                if (wire->activeSignal())
+                    outSignal = true;
+                break;
+            case NotGate:
+                if (wire->activeSignal())
                     outSignal = false;
                 break;
             default:
@@ -62,6 +78,15 @@ void LogicGate::setSvgs() {
             break;
         case SceneItem::NandGate:
             svgs << ":/res/img/nandgate.svg" << ":/res/img/nandgate.svg";
+            break;
+        case SceneItem::OrGate:
+            svgs << ":/res/img/orgate.svg" << ":/res/img/orgate.svg";
+            break;
+        case SceneItem::NorGate:
+            svgs << ":/res/img/norgate.svg" << ":/res/img/norgate.svg";
+            break;
+        case SceneItem::NotGate:
+            svgs << ":/res/img/notgate.svg" << ":/res/img/notgate.svg";
             break;
         default:
             break;

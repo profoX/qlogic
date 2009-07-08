@@ -13,5 +13,8 @@
         <file>img/error.svg</file>
         <file>img/input.svg</file>
         <file>img/output.svg</file>
+        <file>img/norgate.svg</file>
+        <file>img/notgate.svg</file>
+        <file>img/orgate.svg</file>
     </qresource>
 </RCC>

@@ -50,6 +50,9 @@ void MainWindow::unsetButtons() {
     ui->actionAnd->setChecked(false);
     ui->actionOscillator->setChecked(false);
     ui->actionNand->setChecked(false);
+    ui->actionOr->setChecked(false);
+    ui->actionNor->setChecked(false);
+    ui->actionNot->setChecked(false);
 }
 
 void MainWindow::on_actionSelect_triggered()
@@ -114,4 +117,28 @@ void MainWindow::on_actionNand_triggered()
     ui->actionNand->setChecked(true);
     scene->setMode(Scene::InsertItem);
     scene->setItemType(SceneItem::NandGate);
+}
+
+void MainWindow::on_actionOr_triggered()
+{
+    unsetButtons();
+    ui->actionOr->setChecked(true);
+    scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::OrGate);
+}
+
+void MainWindow::on_actionNor_triggered()
+{
+    unsetButtons();
+    ui->actionNor->setChecked(true);
+    scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::NorGate);
+}
+
+void MainWindow::on_actionNot_triggered()
+{
+    unsetButtons();
+    ui->actionNot->setChecked(true);
+    scene->setMode(Scene::InsertItem);
+    scene->setItemType(SceneItem::NotGate);
 }

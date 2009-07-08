@@ -61,6 +61,11 @@ border: none;</string>
     <addaction name="actionAnd"/>
     <addaction name="actionNand"/>
     <addaction name="separator"/>
+    <addaction name="actionOr"/>
+    <addaction name="actionNor"/>
+    <addaction name="separator"/>
+    <addaction name="actionNot"/>
+    <addaction name="separator"/>
     <addaction name="actionSwitch"/>
     <addaction name="actionOscillator"/>
     <addaction name="actionLed"/>
@@ -111,6 +116,11 @@ border: none;</string>
    <addaction name="separator"/>
    <addaction name="actionAnd"/>
    <addaction name="actionNand"/>
+   <addaction name="separator"/>
+   <addaction name="actionOr"/>
+   <addaction name="actionNor"/>
+   <addaction name="separator"/>
+   <addaction name="actionNot"/>
    <addaction name="separator"/>
    <addaction name="actionSwitch"/>
    <addaction name="actionOscillator"/>
@@ -202,7 +212,10 @@ border: none;</string>
      <normaloff>:/res/img/oscillator.svg</normaloff>:/res/img/oscillator.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Oscillator</string>
+    <string>Os&amp;cillator</string>
+   </property>
+   <property name="toolTip">
+    <string>Oscillator</string>
    </property>
   </action>
   <action name="actionNand">
@@ -215,6 +228,51 @@ border: none;</string>
    </property>
    <property name="text">
     <string>&amp;Nand</string>
+   </property>
+  </action>
+  <action name="actionOr">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qlogic.qrc">
+     <normaloff>:/res/img/orgate.svg</normaloff>:/res/img/orgate.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Or</string>
+   </property>
+   <property name="toolTip">
+    <string>Or</string>
+   </property>
+  </action>
+  <action name="actionNor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qlogic.qrc">
+     <normaloff>:/res/img/norgate.svg</normaloff>:/res/img/norgate.svg</iconset>
+   </property>
+   <property name="text">
+    <string>No&amp;r</string>
+   </property>
+   <property name="toolTip">
+    <string>Nor</string>
+   </property>
+  </action>
+  <action name="actionNot">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qlogic.qrc">
+     <normaloff>:/res/img/notgate.svg</normaloff>:/res/img/notgate.svg</iconset>
+   </property>
+   <property name="text">
+    <string>No&amp;t</string>
+   </property>
+   <property name="toolTip">
+    <string>Not</string>
    </property>
   </action>
  </widget>
