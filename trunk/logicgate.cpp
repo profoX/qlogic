@@ -13,6 +13,21 @@ LogicGate::LogicGate(ItemType type, QMenu *contextMenu)
     inverted = (myType == NandGate || myType == NorGate);
     maxGhostOpacity = 75;
     initItem();
+
+    switch (myType) {
+        case AndGate:
+        case NandGate:
+        case OrGate:
+        case NorGate:
+            maxIn = 2;
+            break;
+        case NotGate:
+            maxIn = 1;
+            break;
+        default:
+            break;
+    }
+
 }
 
 void LogicGate::processIncomingSignals() {

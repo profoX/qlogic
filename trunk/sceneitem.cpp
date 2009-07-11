@@ -20,6 +20,11 @@ void SceneItem::initItem() {
     setData(0, QVariant("Item"));
 
     setOpacity(0.0);
+
+    // set maximum input/output connections to infinite
+    maxIn = -1;
+    maxOut = -1;
+
     timeLine = new QTimeLine(333, this);
     timeLine->setFrameRange(0, maxGhostOpacity);
     connect(timeLine, SIGNAL(frameChanged(int)), this, SLOT(setItemOpacity(int)));
@@ -172,4 +177,23 @@ QList<SceneItem*> SceneItem::attachedDevices() {
         devices << outWires.next()->receiver();
 
     return devices;
+}
+
+SceneItem::SignalType SceneItem::signalType()
+{
+    SignalType currentSignal = Locked;
+    if ((mySignalType & Receiver) && canConnectToInput())
+        currentSignal = Receiver;
+    if ((mySignalType & Sender) && canConnectToOutput())
+        currentSignal = (currentSignal & Receiver)? SenderAndReceiver : Sender;
+    return currentSignal;
+}
+
+bool SceneItem::canConnectToInput() {
+
+    return (attachedInWires.size() < maxIn || maxIn < 0);
+}
+
+bool SceneItem::canConnectToOutput() {
+    return (attachedOutWires.size() < maxOut || maxOut < 0);
 }
