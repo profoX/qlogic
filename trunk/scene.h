@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 
 #include "sceneitem.h"
+#include "bubbleitem.h"
 
 class QMenu;
 class BubbleItem;
@@ -30,9 +31,10 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:
+     QList<SceneItem::Sides> shortestPossibleWire(SceneItem *source, SceneItem *target);
      SceneItem::SignalType validSignalTypesFromTo(SceneItem *from, SceneItem *to);
      SceneItem *item, *itemUnderLine;
-     BubbleItem *bubble;
+     BubbleItem *bubble, *bubble2;
      QGraphicsLineItem *line;
      Mode myMode;
      SceneItem::ItemType itemType;

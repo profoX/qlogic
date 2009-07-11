@@ -34,7 +34,7 @@ void Line::setState(bool on) {
     if (active) {
         setPen(QPen(Qt::red, 1));
     } else {
-        setPen(QPen(Qt::black, 1));
+        setPen(QPen(Qt::blue, 1));
     }
     myReceiver->processIncomingSignals();
 }
