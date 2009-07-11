@@ -16,7 +16,7 @@ public:
                    Led,
                    AndGate, NandGate, OrGate, NorGate, NotGate,
                    Bubble};
-    enum SignalType {Invalid = 0x0, Sender = 0x1, Receiver = 0x2, SenderAndReceiver = 0x4};
+    enum SignalType {Locked = 0x0, Sender = 0x1, Receiver = 0x2, SenderAndReceiver = 0x3, Invalid = 0x4};
     enum Sides {None = 0x0, Left = 0x1, Top = 0x2, Right = 0x4, Bottom = 0x8};
     enum {Type = UserType + 1};
 
@@ -24,7 +24,7 @@ public:
     virtual void initAfterCreation();
     int type() const {return Type;}
     ItemType itemType() const {return myType;}
-    SignalType signalType() const {return mySignalType;}
+    SignalType signalType();
     void showOverlayItem();
     void hideOverlayItem();
     bool checkCollision();
@@ -37,6 +37,9 @@ public:
     QList<SceneItem*> attachedDevices();
     int inputSides() {return myInputSides;}
     int outputSides() {return myOutputSides;}
+
+    bool canConnectToInput();
+    bool canConnectToOutput();
 
 public slots:
     void deleteItem();
@@ -55,6 +58,8 @@ protected:
     bool on;
     int myInputSides, myOutputSides;
     int maxGhostOpacity;
+    int maxIn;
+    int maxOut;
 
 private slots:
     void setItemOpacity(int opacity);

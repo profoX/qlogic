@@ -70,11 +70,23 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
         case InsertLine:
             collidingItem = collidingItemAt(mouseEvent->scenePos());
             if (collidingItem) {
-                line = new QGraphicsLineItem(QLineF(collidingItem->pos() + collidingItem->boundingRect().center(),
-                                                    collidingItem->pos() + collidingItem->boundingRect().center()), NULL, this);
-                line->setPen(QPen(Qt::blue, 1));
-                line->setZValue(-1.0);
                 itemUnderLine = qgraphicsitem_cast<SceneItem*>(collidingItem);
+                if (itemUnderLine->signalType() != SceneItem::Invalid && itemUnderLine->signalType() != SceneItem::Locked) {
+                    line = new QGraphicsLineItem(QLineF(collidingItem->pos() + collidingItem->boundingRect().center(),
+                                                        collidingItem->pos() + collidingItem->boundingRect().center()), NULL, this);
+                    line->setPen(QPen(Qt::blue, 1));
+                    line->setZValue(-1.0);
+
+                }
+                else if (!bubble) {
+                    BubbleItem::BubbleIcon icon = BubbleItem::Invalid;
+                    bubble = new BubbleItem(icon);
+                    bubble->setZValue(2.0);
+                    addItem(bubble);
+                    int widthMod = (collidingItem->boundingRect().width() / 2 - bubble->boundingRect().width() / 2);
+                    int heightMod = (collidingItem->boundingRect().height() / 2 - bubble->boundingRect().height() / 2);
+                    bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() + heightMod);
+                }
             }
             break;
         default:
@@ -121,7 +133,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                 QLineF newLine;
                 SceneItem *collidingItem = qgraphicsitem_cast<SceneItem*>(collidingItemAt(mouseEvent->scenePos()));
                 if (collidingItem && itemUnderLine && (collidingItem != itemUnderLine) &&
-                    qgraphicsitem_cast<SceneItem*>(collidingItem)->signalType() != SceneItem::Invalid) {
+                   qgraphicsitem_cast<SceneItem*>(collidingItem)->signalType() != SceneItem::Invalid) {
                     newLine.setPoints(line->line().p1(), collidingItem->pos() + collidingItem->boundingRect().center());
 
                     SceneItem::SignalType validSignalTypes = validSignalTypesFromTo(itemUnderLine, collidingItem);
@@ -136,8 +148,11 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                             bubble = NULL;
                         }
                     }
+
                     if (!bubble) {
-                        if (validSignalTypes == SceneItem::Invalid)
+                        if (itemUnderLine->attachedDevices().contains(collidingItem))
+                            icon = BubbleItem::Invalid;
+                        else if (validSignalTypes == SceneItem::Invalid || validSignalTypes == SceneItem::Locked)
                             icon = BubbleItem::Invalid;
                         else if (validSignalTypes == SceneItem::Receiver)
                             icon = BubbleItem::Input;
@@ -192,6 +207,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                     }
                     newLine.setPoints(line->line().p1(), mouseEvent->scenePos());
                 }
+
                 line->setLine(newLine);
             }
             break;
@@ -208,9 +224,11 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                 SceneItem *collidingItem = qgraphicsitem_cast<SceneItem*>(collidingItemAt(mouseEvent->scenePos()));
                 if (collidingItem && itemUnderLine && (collidingItem != itemUnderLine) &&
                     qgraphicsitem_cast<SceneItem*>(collidingItem)->signalType() != SceneItem::Invalid) {
-                    // Both can't be sender and both can't be receiver
-                    if (!((itemUnderLine->signalType() == SceneItem::Sender && collidingItem->signalType() == SceneItem::Sender) ||
-                        (itemUnderLine->signalType() == SceneItem::Receiver && collidingItem->signalType() == SceneItem::Receiver))) {
+
+                    // A sender and receiver is required
+                    if (((itemUnderLine->signalType() & SceneItem::Sender) && (collidingItem->signalType() & SceneItem::Receiver)) ||
+                        ((itemUnderLine->signalType() & SceneItem::Receiver) && (collidingItem->signalType() & SceneItem::Sender))) {
+
                         // There's no point in connecting devices which are already connected
                         if (!itemUnderLine->attachedDevices().contains(collidingItem)) {
                             Line *wire = new Line(itemUnderLine, collidingItem);
@@ -218,15 +236,17 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                             addItem(wire);
                         } else
                             qDebug() << "User tried to double-wire";
+
                     }
+
                 }
                 delete line;
                 line = NULL;
                 itemUnderLine = NULL;
-                if (bubble) {
-                    bubble->deleteItem();
-                    bubble = NULL;
-                }
+            }
+            if (bubble) {
+                bubble->deleteItem();
+                bubble = NULL;
             }
             break;
         default:
