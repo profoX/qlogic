@@ -72,11 +72,10 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
             if (collidingItem) {
                 itemUnderLine = qgraphicsitem_cast<SceneItem*>(collidingItem);
                 if (itemUnderLine->signalType() != SceneItem::Invalid && itemUnderLine->signalType() != SceneItem::Locked) {
-                    line = new QGraphicsLineItem(QLineF(collidingItem->pos() + collidingItem->boundingRect().center(),
-                                                        collidingItem->pos() + collidingItem->boundingRect().center()), NULL, this);
+                    line = new Line(QLineF(collidingItem->pos() + collidingItem->boundingRect().center(),
+                                           collidingItem->pos() + collidingItem->boundingRect().center()), NULL, this);
                     line->setPen(QPen(Qt::black, 1));
-                    line->setZValue(-1.0);
-
+                    //line->setZValue(-1.0);
                 }
                 else if (!bubble) {
                     BubbleItem::BubbleIcon icon = BubbleItem::Invalid;
@@ -122,9 +121,9 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                 item->setZValue(1.0);
                 addItem(item);
             }
-            // Move per 50 pixels
-            newPosition.setX(static_cast<int>(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50));
-            newPosition.setY(static_cast<int>(mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50));
+            // Move per 25 pixels
+            newPosition.setX(static_cast<int>(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 25));
+            newPosition.setY(static_cast<int>(mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 25));
             item->setPos(newPosition);
             item->checkCollision();
             break;
@@ -132,11 +131,10 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
             if (line) {
                 QLineF newLine;
                 SceneItem *collidingItem = qgraphicsitem_cast<SceneItem*>(collidingItemAt(mouseEvent->scenePos()));
-                if (collidingItem && itemUnderLine && (collidingItem != itemUnderLine) &&
-                   qgraphicsitem_cast<SceneItem*>(collidingItem)->signalType() != SceneItem::Invalid) {
+                if (collidingItem && itemUnderLine && collidingItem != itemUnderLine && collidingItem->signalType() != SceneItem::Invalid) {
                     newLine.setPoints(line->line().p1(), collidingItem->pos() + collidingItem->boundingRect().center());
 
-                    SceneItem::SignalType validSignalTypes = validSignalTypesFromTo(itemUnderLine, collidingItem);
+                    SceneItem::SignalType validSignalTypes = Line::validSignalTypesFromTo(itemUnderLine, collidingItem);
                     BubbleItem::BubbleIcon icon, icon2;
 
                     if (validSignalTypes == SceneItem::SenderAndReceiver) {
@@ -146,11 +144,11 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                         } else if (itemUnderLine->signalType() == SceneItem::Receiver) {
                             icon = BubbleItem::Output;
                             icon2 = BubbleItem::Input;
-                        }
-                        else {
+                        } else { // SceneItem::SenderAndReceiver
                             // Only supports left and right; this suffices for our current sender/receiver items (logic gates)
                             int rightFromCenter = mouseEvent->scenePos().x() - collidingItem->x() - collidingItem->boundingRect().width() / 2;
                             icon = rightFromCenter < 0 ? BubbleItem::Input : BubbleItem::Output;
+                            icon2 = rightFromCenter < 0 ? BubbleItem::Output : BubbleItem::Input;
                         }
                         if (bubble && bubble->icon() != icon) {
                             bubble->deleteItem();
@@ -183,11 +181,13 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                     int widthMod = (collidingItem->boundingRect().width() / 2 - bubble->boundingRect().width() / 2);
                     int heightMod = (collidingItem->boundingRect().height() / 2 - bubble->boundingRect().height() / 2);
 
-                    QList<SceneItem::Sides> wire = shortestPossibleWire(itemUnderLine, collidingItem);
+                    QList<SceneItem::Sides> wire = Line::shortestPossibleWire(itemUnderLine, collidingItem, bubble->icon());
                     if (wire.isEmpty()) {
                         bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() + heightMod);
                         bubble2->hide();
                     } else {
+                        line->setSides(wire[0], wire[1]);
+                        line->setItems(itemUnderLine, collidingItem);
                         bubble2->show();
                         if (wire[0] == SceneItem::Left)
                             bubble2->setPos(itemUnderLine->x() - bubble2->boundingRect().width(), itemUnderLine->y() + heightMod);
@@ -213,6 +213,8 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                         bubble2->deleteItem();
                         bubble2 = NULL;
                     }
+                    line->setSides(SceneItem::None, SceneItem::None);
+                    line->setItems(NULL, NULL);
                     newLine.setPoints(line->line().p1(), mouseEvent->scenePos());
                 }
 
@@ -229,6 +231,7 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     switch (myMode) {
         case InsertLine:
             if (line) {
+                bool deleteLine = true;
                 SceneItem *collidingItem = qgraphicsitem_cast<SceneItem*>(collidingItemAt(mouseEvent->scenePos()));
                 if (collidingItem && itemUnderLine && (collidingItem != itemUnderLine) &&
                     qgraphicsitem_cast<SceneItem*>(collidingItem)->signalType() != SceneItem::Invalid) {
@@ -239,16 +242,18 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 
                         // There's no point in connecting devices which are already connected
                         if (!itemUnderLine->attachedDevices().contains(collidingItem)) {
-                            Line *wire = new Line(itemUnderLine, collidingItem);
-                            wire->setLine(line->line());
-                            addItem(wire);
+                            line->setItems(itemUnderLine, collidingItem);
+                            line->activate();
+                            deleteLine = false;
+                            addItem(line);
                         } else
                             qDebug() << "User tried to double-wire";
 
                     }
 
                 }
-                delete line;
+                if (deleteLine)
+                    delete line;
                 line = NULL;
                 itemUnderLine = NULL;
             }
@@ -263,101 +268,4 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
             break;
     }
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
-}
-
-QList<SceneItem::Sides> Scene::shortestPossibleWire(SceneItem *source, SceneItem *target) {
-    QList<SceneItem::Sides> wire;
-
-    // A valid wire can only be drawn when one item can act as sender and the other as receiver
-    SceneItem::SignalType validSignalTypes = validSignalTypesFromTo(source, target);
-    if (source->attachedDevices().contains(target) || validSignalTypes == SceneItem::Invalid ||
-        validSignalTypes == SceneItem::Locked)
-        return wire;
-
-    // Valid sides for items
-    int validSidesTarget = (bubble->icon() == BubbleItem::Input ? target->inputSides() : target->outputSides());
-    int validSidesSource = (bubble->icon() == BubbleItem::Input ? source->outputSides() : source->inputSides());
-
-    // Set up connection preference based on item locations
-    QList<SceneItem::Sides> preferredTargetSides, preferredSourceSides;
-    SceneItem::Sides leastPreferredTargetSide, leastPreferredSourceSide;
-    int right = (target->x() + target->boundingRect().width() / 2) - (source->x() + source->boundingRect().width() / 2);
-    int bottom = (target->y() + target->boundingRect().height() / 2) - (source->y() + source->boundingRect().height() / 2);
-
-    if (qAbs(bottom) > qAbs(right)) { // Vertical preference
-        if (bottom >= 0) { // Target item is below source item
-            leastPreferredTargetSide = SceneItem::Bottom;
-            preferredTargetSides.prepend(SceneItem::Top);
-            leastPreferredSourceSide = SceneItem::Top;
-            preferredSourceSides.prepend(SceneItem::Bottom);
-        } else {
-            leastPreferredTargetSide = SceneItem::Top;
-            preferredTargetSides.prepend(SceneItem::Bottom);
-            leastPreferredSourceSide = SceneItem::Bottom;
-            preferredSourceSides.prepend(SceneItem::Top);
-        }
-        if (right >= 0) { // Target item is to the right from source item
-            preferredTargetSides.append(SceneItem::Left);
-            preferredTargetSides.append(SceneItem::Right);
-            preferredSourceSides.append(SceneItem::Right);
-            preferredSourceSides.append(SceneItem::Left);
-        } else {
-            preferredTargetSides.append(SceneItem::Right);
-            preferredTargetSides.append(SceneItem::Left);
-            preferredSourceSides.append(SceneItem::Left);
-            preferredSourceSides.append(SceneItem::Right);
-        }
-    } else { // Horizontal preference
-        if (right >= 0) { // Target item is to the right from source item
-            leastPreferredTargetSide = SceneItem::Right;
-            preferredTargetSides.prepend(SceneItem::Left);
-            leastPreferredSourceSide = SceneItem::Left;
-            preferredSourceSides.prepend(SceneItem::Right);
-        } else {
-            leastPreferredTargetSide = SceneItem::Left;
-            preferredTargetSides.prepend(SceneItem::Right);
-            leastPreferredSourceSide = SceneItem::Right;
-            preferredSourceSides.prepend(SceneItem::Left);
-        }
-        if (bottom >= 0) { // Target item is below source item
-            preferredTargetSides.append(SceneItem::Top);
-            preferredTargetSides.append(SceneItem::Bottom);
-            preferredSourceSides.append(SceneItem::Bottom);
-            preferredSourceSides.append(SceneItem::Top);
-        } else {
-            preferredTargetSides.append(SceneItem::Bottom);
-            preferredTargetSides.append(SceneItem::Top);
-            preferredSourceSides.append(SceneItem::Top);
-            preferredSourceSides.append(SceneItem::Bottom);
-        }
-    }
-    preferredTargetSides.append(leastPreferredTargetSide);
-    preferredSourceSides.append(leastPreferredSourceSide);
-
-    // Calculate valid side of source and target item closest to eachother
-    bool found = false;
-    for (int i = 0; !found && i < preferredSourceSides.count(); ++i) {
-        if (validSidesSource & preferredSourceSides[i]) {
-            wire.append(preferredSourceSides[i]);
-            found = true;
-        }
-    }
-    found = false;
-    for (int i = 0; !found && i < preferredTargetSides.count(); ++i) {
-        if (validSidesTarget & preferredTargetSides[i]) {
-            wire.append(preferredTargetSides[i]);
-            found = true;
-        }
-    }
-
-    if (wire.count() != 2)
-        wire.clear();
-    return wire;
-}
-
-SceneItem::SignalType Scene::validSignalTypesFromTo(SceneItem *from, SceneItem *to) {
-    if ((from->signalType() == to->signalType() && to->signalType() != SceneItem::SenderAndReceiver))
-        return SceneItem::Invalid;
-    else
-        return to->signalType();
 }
