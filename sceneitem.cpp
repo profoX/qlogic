@@ -92,8 +92,8 @@ void SceneItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 void SceneItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     Scene::Mode mode = qobject_cast<Scene*>(scene())->mode();
     if (mode == Scene::MoveItem) {
-        QPointF newPosition(static_cast<int>(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 50),
-                            static_cast<int>(mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 50));
+        QPointF newPosition(static_cast<int>(mouseEvent->scenePos().x() - static_cast<int>(mouseEvent->scenePos().x()) % 25),
+                            static_cast<int>(mouseEvent->scenePos().y() - static_cast<int>(mouseEvent->scenePos().y()) % 25));
         moveWithWires(newPosition);
         checkCollision();
     }
@@ -106,6 +106,10 @@ void SceneItem::moveWithWires(QPointF newPosition) {
     QListIterator<Line*> wires(attachedInWires << attachedOutWires);
     while (wires.hasNext()) {
         Line *wire = wires.next();
+        QList<SceneItem::Sides> sides = Line::shortestPossibleWire(wire->sender(), wire->receiver(), BubbleItem::Input);
+        qDebug() << sides;
+        if (!sides.isEmpty())
+            wire->setSides(sides[0], sides[1]);
         wire->setLine(QLineF(wire->sender()->pos() + wire->sender()->boundingRect().center(),
                              wire->receiver()->pos() + wire->receiver()->boundingRect().center()));
     }

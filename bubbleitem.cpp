@@ -6,7 +6,7 @@ BubbleItem::BubbleItem(BubbleIcon icon) {
     myType = SceneItem::Bubble;
     mySignalType = SceneItem::Invalid;
     myIcon = icon;
-    maxGhostOpacity = 100;
+    maxGhostOpacity = 50;
     initItem();
     setData(0, QVariant("Bubble"));
 }

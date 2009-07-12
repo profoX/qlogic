@@ -31,11 +31,9 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:
-     QList<SceneItem::Sides> shortestPossibleWire(SceneItem *source, SceneItem *target);
-     SceneItem::SignalType validSignalTypesFromTo(SceneItem *from, SceneItem *to);
      SceneItem *item, *itemUnderLine;
      BubbleItem *bubble, *bubble2;
-     QGraphicsLineItem *line;
+     Line *line;
      Mode myMode;
      SceneItem::ItemType itemType;
      QMenu *itemMenu;
