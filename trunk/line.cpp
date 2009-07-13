@@ -24,8 +24,7 @@ void Line::activate() {
     }
 }
 
-void Line::setItems(SceneItem *item1, SceneItem::Sides item1side, SceneItem *item2, SceneItem::Sides item2side, bool forceSenderOnItem2)
-{
+void Line::setItems(SceneItem *item1, SceneItem::Sides item1side, SceneItem *item2, SceneItem::Sides item2side, bool forceSenderOnItem2) {
     if (item1 && item2) {
         // Both can't be sender and both can't be receiver, otherwise this function would not be called
         if (item1->signalType() == SceneItem::Sender || item2->signalType() == SceneItem::Receiver) {

@@ -103,7 +103,7 @@ void SceneItem::moveWithWires(QPointF newPosition) {
     setPos(newPosition);
 
     // Move attached wires as well
-    QListIterator<Line*> wires(attachedInWires << attachedOutWires);
+    QListIterator<Line*> wires(attachedInWires + attachedOutWires);
     while (wires.hasNext()) {
         Line *wire = wires.next();
         QList<SceneItem::Sides> sides = Line::shortestPossibleWire(wire->sender(), wire->receiver(), BubbleItem::Input);
