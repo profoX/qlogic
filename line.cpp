@@ -24,24 +24,37 @@ void Line::activate() {
     }
 }
 
-void Line::setItems(SceneItem *item1, SceneItem *item2)
+void Line::setItems(SceneItem *item1, SceneItem::Sides item1side, SceneItem *item2, SceneItem::Sides item2side)
 {
     if (item1 && item2) {
         // Both can't be sender and both can't be receiver, otherwise this function would not be called
         if (item1->signalType() == SceneItem::Sender || item2->signalType() == SceneItem::Receiver) {
             mySender = item1;
             myReceiver = item2;
+            senderSide = item1side;
+            receiverSide = item2side;
         } else if (item2->signalType() == SceneItem::Sender || item1->signalType() == SceneItem::Receiver) {
             mySender = item2;
             myReceiver = item1;
+            senderSide = item2side;
+            receiverSide = item1side;
         } else {
             mySender = item1;
             myReceiver = item2;
+            senderSide = item1side;
+            receiverSide = item2side;
         }
     } else {
         mySender = NULL;
         myReceiver = NULL;
+        senderSide = SceneItem::None;
+        receiverSide = SceneItem::None;
     }
+}
+
+void Line::setSides(SceneItem::Sides senderSide, SceneItem::Sides receiverSide) {
+    this->senderSide = senderSide;
+    this->receiverSide = receiverSide;
 }
 
 void Line::setState(bool on) {
@@ -52,11 +65,6 @@ void Line::setState(bool on) {
         setPen(QPen(Qt::blue, 1));
     }
     myReceiver->processIncomingSignals();
-}
-
-void Line::setSides(SceneItem::Sides senderSide, SceneItem::Sides receiverSide) {
-    this->senderSide = senderSide;
-    this->receiverSide = receiverSide;
 }
 
 void Line::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
