@@ -11,7 +11,7 @@ class Line : public QGraphicsLineItem
 public:
     Line(const QLineF &line, QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
     void activate();
-    void setItems(SceneItem *item1, SceneItem::Sides item1side, SceneItem *item2, SceneItem::Sides item2side);
+    void setItems(SceneItem *item1, SceneItem::Sides item1side, SceneItem *item2, SceneItem::Sides item2side, bool forceSenderOnItem2 = false);
     void setSides(SceneItem::Sides senderSide, SceneItem::Sides receiverSide);
     SceneItem *sender() {return mySender;}
     SceneItem *receiver() {return myReceiver;}

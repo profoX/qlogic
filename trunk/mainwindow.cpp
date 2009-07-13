@@ -87,11 +87,12 @@ void MainWindow::on_actionLine_triggered()
 
 void MainWindow::on_actionUseOpenGL_triggered(bool checked)
 {
-    if (checked)
-        ui->view->setViewport(new QGLWidget);
-    else {
+    if (checked) {
+        ui->view->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+        //ui->view->setStyleSheet(QString(""));
+    } else {
         ui->view->setViewport(NULL);
-        ui->view->setStyleSheet(viewStyleSheet);
+        //ui->view->setStyleSheet(viewStyleSheet);
     }
 }
 

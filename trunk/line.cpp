@@ -24,7 +24,7 @@ void Line::activate() {
     }
 }
 
-void Line::setItems(SceneItem *item1, SceneItem::Sides item1side, SceneItem *item2, SceneItem::Sides item2side)
+void Line::setItems(SceneItem *item1, SceneItem::Sides item1side, SceneItem *item2, SceneItem::Sides item2side, bool forceSenderOnItem2)
 {
     if (item1 && item2) {
         // Both can't be sender and both can't be receiver, otherwise this function would not be called
@@ -33,7 +33,7 @@ void Line::setItems(SceneItem *item1, SceneItem::Sides item1side, SceneItem *ite
             myReceiver = item2;
             senderSide = item1side;
             receiverSide = item2side;
-        } else if (item2->signalType() == SceneItem::Sender || item1->signalType() == SceneItem::Receiver) {
+        } else if (item2->signalType() == SceneItem::Sender || item1->signalType() == SceneItem::Receiver || forceSenderOnItem2) {
             mySender = item2;
             myReceiver = item1;
             senderSide = item2side;
