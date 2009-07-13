@@ -186,8 +186,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                         bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() + heightMod);
                         bubble2->hide();
                     } else {
-                        line->setSides(wire[0], wire[1]);
-                        line->setItems(itemUnderLine, collidingItem);
+                        line->setItems(itemUnderLine, wire[0], collidingItem, wire[1]);
                         bubble2->show();
                         if (wire[0] == SceneItem::Left)
                             bubble2->setPos(itemUnderLine->x() - bubble2->boundingRect().width(), itemUnderLine->y() + heightMod);
@@ -213,8 +212,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                         bubble2->deleteItem();
                         bubble2 = NULL;
                     }
-                    line->setSides(SceneItem::None, SceneItem::None);
-                    line->setItems(NULL, NULL);
+                    line->setItems(NULL, SceneItem::None, NULL, SceneItem::None);
                     newLine.setPoints(line->line().p1(), mouseEvent->scenePos());
                 }
 
@@ -242,10 +240,8 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 
                         // There's no point in connecting devices which are already connected
                         if (!itemUnderLine->attachedDevices().contains(collidingItem)) {
-                            line->setItems(itemUnderLine, collidingItem);
                             line->activate();
                             deleteLine = false;
-                            addItem(line);
                         } else
                             qDebug() << "User tried to double-wire";
 
