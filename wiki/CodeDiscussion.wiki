@@ -10,10 +10,10 @@ This page is meant for the developers to discuss the code and talk about differe
 The wiring user interface is completely different from KLogic. Wesley's idea is to implement it like this:
 
   * <font color="green">When in _wire mode_ user clicks and holds the left mouse button on an item to draw a wire between that item and another item</font>
-  * <font color="blue">When the mouse cursor is over another item, the shortest possible/allowed wire between the two items should be shown</font>
+  * <font color="green">When the mouse cursor is over another item, the shortest possible/allowed wire between the two items should be shown</font>
   * <font color="green">When the connection is invalid, there should be an "invalid" icon over the target item</font>
-  * <font color="blue">When the connection is valid, there should be an "input" or "output" icon in front of the target icon, connected to the wire.</font>
-  * <font color="red">When the target is an item which is capable of input AND output (like logic gates) the chosen mode depends on the source item:
+  * <font color="green">When the connection is valid, there should be an "input" or "output" icon in front of the target icon, connected to the wire.</font>
+  * <font color="green">When the target is an item which is capable of input AND output (like logic gates) the chosen mode depends on the source item:
     * Source item is an input item: wire will be an "out" connection from source to target
     * Source item is an output item: wire will be an "in" connection from source to target
     * Source item is an input AND output item: connection type will be decided depending on which side of the target item the mouse cursor is located. Visual feedback (input/output icon) will help the user</font>
@@ -21,10 +21,10 @@ The wiring user interface is completely different from KLogic. Wesley's idea is 
   * <font color="red">New wires can be attached anywhere on existing wires; a dot item will be created.</font>
   * <font color="red">Wires should snap to certain pixel positions.</font>
   * <font color="green">Items should snap to certain pixel positions (to improve alignment of items).</font>
-  * <font color="blue">Every item should have a property which decides on which sides it can send or receive signals.</font>
-  * <font color="red">There should be a small offset between the item and the connected wire, the offset should be a small straight line (like in KLogic)</font>
+  * <font color="green">Every item should have a property which decides on which sides it can send or receive signals.</font>
+  * <font color="green">There should be a small offset between the item and the connected wire, the offset should be a small straight line (like in KLogic)</font>
   * <font color="red">Location of multiple input wires on the same side of an item should be equally divided among the available space of that side of the item.</font>
-  * <font color="red">Multiple output signals on the same side should start from the same point (center).</font>
+  * <font color="green">Multiple output signals on the same side should start from the same point (center).</font>
   * <font color="green">Wires should move together with the item they are attached to when the position of an item is changed</font>
 
 Legend:
