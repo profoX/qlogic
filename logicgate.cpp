@@ -3,8 +3,7 @@
 
 #include <QDebug>
 
-LogicGate::LogicGate(ItemType type, QMenu *contextMenu)
-{
+LogicGate::LogicGate(ItemType type, QMenu *contextMenu) {
     myType = type;
     myContextMenu = contextMenu;
     mySignalType = SceneItem::SenderAndReceiver;
@@ -52,8 +51,11 @@ void LogicGate::processIncomingSignals() {
             break;
     }
 
+    int c = 0;
     while (wires.hasNext()) {
         Line *wire = wires.next();
+        ++c;
+        qDebug() << "wireCount " << c;
 
         switch (myType) {
             case AndGate:
