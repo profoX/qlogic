@@ -2,6 +2,7 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
+#include <QPainter>
 
 #include "scene.h"
 #include "line.h"
@@ -186,7 +187,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
                         bubble->setPos(collidingItem->x() + widthMod, collidingItem->y() + heightMod);
                         bubble2->hide();
                     } else {
-                        line->setItems(itemUnderLine, wire[0], collidingItem, wire[1]);
+                        line->setItems(itemUnderLine, wire[0], collidingItem, wire[1], icon == BubbleItem::Output ? true : false);
                         bubble2->show();
                         if (wire[0] == SceneItem::Left)
                             bubble2->setPos(itemUnderLine->x() - bubble2->boundingRect().width(), itemUnderLine->y() + heightMod);
