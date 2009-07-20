@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QGraphicsScene>
 
 #include <QPen>
 #include <QPainter>
@@ -105,6 +106,25 @@ void Line::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         painter->drawLine(myReceiver->pos() + myReceiver->boundingRect().center(), p2);
     }
     painter->drawLine(p1, p2);
+    /*painter->setOpacity(0.2);
+    painter->setBrush(Qt::green);
+    if (mySender && myReceiver)
+        painter->drawRect(myBoundingRect);
+    painter->setBrush(Qt::red);
+    if (mySender && myReceiver)
+        painter->drawRect(rect2);*/
+}
+
+QRectF Line::boundingRect() const {
+    /*QRectF rect = QRectF(QPointF(0, 0), QPointF(scene()->width(), scene()->height()));
+    if (mySender && myReceiver) {
+        QRectF newBoundingRect(mySender->pos() + mySender->boundingRect().center(), myReceiver->pos() + myReceiver->boundingRect().center());
+        //rect = myBoundingRect | newBoundingRect;
+        ((Line*)this)->rect2 = myBoundingRect | newBoundingRect;
+        ((Line*)this)->myBoundingRect = newBoundingRect;
+    }
+    return rect;*/
+    return scene()->sceneRect();
 }
 
 QList<SceneItem::Sides> Line::shortestPossibleWire(SceneItem *source, SceneItem *target, BubbleItem::BubbleIcon icon) {
