@@ -23,10 +23,12 @@ public:
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+    QRectF boundingRect() const;
 
 private:
     SceneItem *mySender, *myReceiver;
     SceneItem::Sides senderSide, receiverSide;
+    QRectF myBoundingRect, rect2;
     bool active;
 };
 
